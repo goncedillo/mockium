@@ -13,7 +13,7 @@ async function listDirectories(command) {
   });
 }
 
-function start() {
+async function start() {
   program
     .option("-m, --mocks-directory [mocks]", "Mocks directory relative path")
     .option(
@@ -22,7 +22,9 @@ function start() {
     )
     .parse(process.argv);
 
-  listDirectories(program);
+  const features = await listDirectories(program);
+
+  console.log(features);
 }
 
 start();
