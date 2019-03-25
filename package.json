@@ -1,0 +1,29 @@
+{
+  "name": "mockium",
+  "version": "0.1.0",
+  "description": "Versatile, scalable and adaptable mock server based on the simplicity of mocking API requests.",
+  "main": "index.js",
+  "bin": {
+    "mockium": "./bin/mockium.js"
+  },
+  "scripts": {
+    "debug": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mock",
+    "mock-server",
+    "fake",
+    "server",
+    "server",
+    "mock",
+    "server",
+    "api",
+    "test"
+  ],
+  "author": "GonzaloCedillo <goncedillo@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^2.19.0"
+  }
+}
