@@ -2,6 +2,7 @@
 
 const program = require("commander");
 const resources = require("../lib/cli/resources");
+const questions = require("../lib/cli/questions");
 
 async function listDirectories(command) {
   return new Promise(async (resolve, reject) => {
@@ -14,7 +15,6 @@ async function listDirectories(command) {
 }
 
 async function start() {
-  console.log("Algo");
   program
     .option(
       "-f, --features-directory [features]",
@@ -23,7 +23,13 @@ async function start() {
     )
     .parse(process.argv);
 
-  const features = await listDirectories(program);
+  const features = (await listDirectories(program)).filter(item => item.name);
+
+  console.log(features);
+
+  questions.askMenuOptions(features.map(item => item.name)).then(response => {
+    console.log("Response");
+  });
 }
 
 start();
