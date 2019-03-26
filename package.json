@@ -4,7 +4,8 @@
   "description": "Versatile, scalable and adaptable mock server based on the simplicity of mocking API requests.",
   "main": "index.js",
   "bin": {
-    "mockium": "./bin/mockium.js"
+    "mockium": "./bin/mockium.js",
+    "mockium_features": "./bin/mockium-features.js"
   },
   "scripts": {
     "debug": "echo \"Error: no test specified\" && exit 1"
@@ -24,7 +25,8 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "^2.4.2",
-    "commander": "^2.19.0"
+    "commander": "^2.19.0",
+    "stmux": "^1.6.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

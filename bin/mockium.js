@@ -1,17 +1,7 @@
 #!/usr/bin/env node
 
+const child_process = require("child_process");
 const program = require("commander");
-const resources = require("../lib/cli/resources");
-
-async function listDirectories(command) {
-  return new Promise(async (resolve, reject) => {
-    const featuresList = await resources
-      .getFeaturesFromPath(command.featuresDirectory, ".feature.js")
-      .catch(err => console.error("[[ERROR]]", err));
-
-    return resolve(featuresList.map(featureFile => require(featureFile)));
-  });
-}
 
 async function start() {
   program
@@ -22,9 +12,11 @@ async function start() {
     )
     .parse(process.argv);
 
-  const features = await listDirectories(program);
-
-  console.log(features);
+  const ls = child_process.spawn("stmux", ["[mockium_features]"], {
+    cwd: process.cwd(),
+    shell: true,
+    stdio: "inherit"
+  });
 }
 
 start();
