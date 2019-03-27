@@ -2,6 +2,7 @@
 
 const child_process = require("child_process");
 const program = require("commander");
+const chalk = require("chalk");
 
 async function start() {
   program
@@ -12,10 +13,23 @@ async function start() {
     )
     .parse(process.argv);
 
-  const ls = child_process.spawn("stmux", ["[mockium_features]"], {
-    cwd: process.cwd(),
-    shell: true,
-    stdio: "inherit"
+  const ls = child_process.spawn(
+    "stmux",
+    ["[mockium_features -f ./features .. mockium_server]"],
+    {
+      cwd: process.cwd(),
+      shell: true,
+      stdio: "inherit"
+    }
+  );
+
+  ls.on("exit", () => {
+    console.log(
+      `----
+${chalk.white.bold("Thank you for using")} ${chalk.blue.bold("Mockium")}
+---`
+    );
+    process.exit(0);
   });
 }
 

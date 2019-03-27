@@ -41,4 +41,8 @@ async function start() {
   manager.goToMainMenu();
 }
 
+process.on("beforeExit", () => {
+  process.kill(process.ppid);
+});
+
 start();
