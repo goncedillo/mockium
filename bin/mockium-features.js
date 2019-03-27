@@ -5,16 +5,7 @@ const resources = require("../lib/cli/resources");
 const Prompting = require("../lib/Prompting");
 const MockiumManager = require("../lib/MockiumManager");
 const promptingMessages = require("../lib/utils/PromptingMessages");
-
-async function listDirectories(command) {
-  return new Promise(async (resolve, reject) => {
-    const featuresList = await resources
-      .getFeaturesFromPath(command.featuresDirectory, ".feature.js")
-      .catch(err => console.error("[[ERROR]]", err));
-
-    return resolve(featuresList.map(featureFile => require(featureFile)));
-  });
-}
+const featuresLoader = require("../lib/utils/features-loader");
 
 async function start() {
   program
@@ -25,7 +16,11 @@ async function start() {
     )
     .parse(process.argv);
 
-  const features = (await listDirectories(program)).filter(item => item.name);
+  const features = (await featuresLoader.load(
+    program.featuresDirectory,
+    resources.getFeaturesFromPath,
+    ".feature.js"
+  )).filter(item => item.name);
   const manager = new MockiumManager(features, promptingMessages);
   const menuOptions = [
     {
