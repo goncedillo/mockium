@@ -9,7 +9,7 @@
     "mockium_server": "./bin/mockium-server.js"
   },
   "scripts": {
-    "debug": "echo \"Error: no test specified\" && exit 1"
+    "preinstall": "npm i -g stmux"
   },
   "keywords": [
     "mock",
