@@ -39,6 +39,7 @@ async function start() {
 
   manager.prompting = prompting;
   manager.goToMainMenu();
+  manager.connect();
 }
 
 process.on("beforeExit", () => {

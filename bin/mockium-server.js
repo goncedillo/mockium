@@ -6,6 +6,7 @@ const featuresLoader = require("../lib/utils/features-loader");
 const ServerManager = require("../lib/server/ServerManager");
 const Server = require("../lib/server/Server");
 const logger = require("../lib/utils/console-logger");
+const SocketServer = require("../lib/server/SocketServer");
 
 async function start() {
   program
@@ -23,7 +24,8 @@ async function start() {
   )).filter(item => item.name);
 
   const server = new Server(features);
-  const serverManager = new ServerManager(server, logger, {
+  const socketServer = new SocketServer();
+  const serverManager = new ServerManager(server, socketServer, logger, {
     SERVER_PORT: 5000,
     DEFAULT_FEATURE: "base"
   });
