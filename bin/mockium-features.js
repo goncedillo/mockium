@@ -6,6 +6,7 @@ const Prompting = require("../lib/Prompting");
 const MockiumManager = require("../lib/MockiumManager");
 const promptingMessages = require("../lib/utils/PromptingMessages");
 const featuresLoader = require("../lib/utils/features-loader");
+const processKiller = require("../lib/utils/process-killer");
 
 async function start() {
   program
@@ -42,8 +43,8 @@ async function start() {
   manager.connect();
 }
 
-process.on("beforeExit", () => {
-  process.kill(process.ppid);
-});
+process.on("disconnect", () => processKiller(process));
+process.on("SIGINT", () => processKiller(process));
+process.on("SIGTERM", () => processKiller(process));
 
 start();
