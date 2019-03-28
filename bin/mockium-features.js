@@ -31,7 +31,7 @@ async function start() {
     {
       name: "Exit",
       value: "exit",
-      go: () => process.exit(0)
+      go: () => process.kill(process.ppid)
     }
   ];
 
