@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const program = require("commander");
 const processManager = require("../lib/cli/process-manager");
-const configManager = require("../lib/cli/configuration-manager");
+const defaultConfig = require("../lib/cli/config");
 
 async function start() {
   program
@@ -25,9 +25,9 @@ async function start() {
     )
     .parse(process.argv);
 
-  const configPath = await configManager.createConfigFile(program);
+  const config = defaultConfig(program);
 
-  processManager.runProcess(configPath, configManager.loadConfig);
+  processManager.runProcess(config);
 }
 
 start();

@@ -7,22 +7,37 @@ const MockiumManager = require("../lib/MockiumManager");
 const promptingMessages = require("../lib/utils/PromptingMessages");
 const featuresLoader = require("../lib/utils/features-loader");
 const processKiller = require("../lib/utils/process-killer");
+const defaultConfig = require("../lib/cli/config");
 
 async function start() {
   program
     .option(
-      "-f, --features-directory [features]",
-      "Features directory relative path",
-      "./features"
+      "-e, --features-extension [extension]",
+      "Subextension for feature files"
+    )
+    .option("-b, --features-base [base]", "Name of the base feature file")
+    .option(
+      "-p, --server-port [port]",
+      "Port where the server will be deployed"
+    )
+    .option(
+      "-s, --socket-port [socket]",
+      "Port where the socket server will be deployed"
+    )
+    .option(
+      "-f, --features-folder [features]",
+      "Features directory relative path"
     )
     .parse(process.argv);
 
+  const config = defaultConfig(program);
+
   const features = (await featuresLoader.load(
-    program.featuresDirectory,
+    config.featuresFolder,
     resources.getFeaturesFromPath,
-    ".feature.js"
+    `.${config.extension}.js`
   )).filter(item => item.name);
-  const manager = new MockiumManager(features, promptingMessages);
+  const manager = new MockiumManager(config, features, promptingMessages);
   const menuOptions = [
     {
       name: "Change feature",
@@ -39,7 +54,6 @@ async function start() {
   const prompting = new Prompting(features, menuOptions);
 
   manager.prompting = prompting;
-  manager.goToMainMenu();
   manager.connect();
 }
 
