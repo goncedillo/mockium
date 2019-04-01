@@ -30,12 +30,12 @@ Other important optional parameter you can use as flag are the following:
 
 | Property | Default | |
 | ----------- | ----------- | ----------- |
-| **--mockium-folder** | ./mockium | Relative path to the mockium folder |
-| **--features-folder** | ./features | Relative path to the features folder from mockium folder |
-| **--features-extension** | features | Extension chained to the feature file name |
-| **--features-base** | base | Name of the base feature file |
-| **--server-port** | 5000 | Port where the server will be deployed  |
-| **--server-bridge-port** | 5001 | Port where the socket server will be deployed  |
+| --mockium-folder | ./mockium | Relative path to the mockium folder |
+| --features-folder | ./features | Relative path to the features folder from mockium folder |
+| --features-extension | feature | Extension chained to the feature file name |
+| --features-base | base | Name of the base feature file |
+| --server-port | 5000 | Port where the server will be deployed  |
+| --server-bridge-port | 5001 | Port where the socket server will be deployed  |
 
 ## Getting started
 
@@ -52,8 +52,8 @@ These files has to accomplish the following model:
 
 | Property | Type | Value |
 | ----------- | ----------- | ----------- |
-| **name** | *string* | Name of this feature |
-| **mocks** | *string []* | List of mock objects |
+| name | *string* | Name of this feature |
+| mocks | *string []* | List of mock objects |
 
 e.g.
 ```js
@@ -74,14 +74,14 @@ The mock's model has to respect some defined properties:
 
 | Property | Required | Type | Value |
 | ----------- | ----------- | ----------- | ----------- |
-| **url** | * | *string* | Server url which will be mocked. Query and url params are supported |
-| **method** | * | *string* | Http verb of the request (GET, POST, PUT ...) |
-| **request** |  | *object* | Properties related to the request |
-| **request.headers** |  | *object* | Map of request headers (key/value expected) |
-| **request.body** |  | *object* | Map of request sent values in a no GET format |
-| **response** | * | *object* | Properties related to the request |
-| **response.status** | * | *number/string* | Response Http code (200, 201, 400, 500 ...) |
-| **response.body** |  | *object* | Object with the response data of the request |
+| url | * | *string* | Server url which will be mocked. Query and url params are supported |
+| method | * | *string* | Http verb of the request (GET, POST, PUT ...) |
+| request |  | *object* | Properties related to the request |
+| request.headers |  | *object* | Map of request headers (key/value expected) |
+| request.body |  | *object* | Map of request sent values in a no GET format |
+| response | * | *object* | Properties related to the request |
+| response.status | * | *number/string* | Response Http code (200, 201, 400, 500 ...) |
+| response.body |  | *object* | Object with the response data of the request |
 
 e.g:
 
