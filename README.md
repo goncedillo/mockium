@@ -81,7 +81,7 @@ The mock's model has to respect some defined properties:
 | request.body |  | *object* | Map of request sent values in a no GET format |
 | response | * | *object* | Properties related to the request |
 | response.status | * | *number/string* | Response Http code (200, 201, 400, 500 ...) |
-| response.body |  | *object* | Object with the response data of the request |
+| response.body |  | *object/function* | Object with the response data of the request. OPtionally, It could be a function, which will be called to execute the response |
 
 e.g:
 
