@@ -50,10 +50,11 @@ In Mockium, features are a group of mocks. It means that we can define diferent 
 
 These files has to accomplish the following model:
 
-| Property | Type | Value |
+| Property | Required | Type | Value |
 | ----------- | ----------- | ----------- |
-| name | *string* | Name of this feature |
-| mocks | *string []* | List of mock objects |
+| name | * | *string* | Name of this feature |
+| description |  | *string* | Description of this feature |
+| mocks | * | *string []* | List of mock objects |
 
 e.g.
 ```js
