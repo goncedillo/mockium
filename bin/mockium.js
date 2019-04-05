@@ -17,7 +17,7 @@ async function start() {
       "Port where the server will be deployed"
     )
     .option(
-      "-s, --socket-port [socket]",
+      "-s, --server-bridge-port [socket]",
       "Port where the socket server will be deployed"
     )
     .option(
