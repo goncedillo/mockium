@@ -10,6 +10,7 @@ const SocketServer = require("../lib/server/SocketServer");
 const defaultConfig = require("../lib/cli/config");
 const processKiller = require("../lib/utils/process-killer");
 const optionsManager = require("../lib/cli/options-manager");
+const serverEvents = require("../lib/server/ServerEvent");
 
 async function start() {
   program
@@ -47,6 +48,11 @@ async function start() {
     SERVER_PORT: config.serverPort,
     DEFAULT_FEATURE: config.base
   });
+
+  socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
+    processKiller(process)
+  );
+
   serverManager.startServer();
 }
 

@@ -57,10 +57,16 @@ async function start() {
 
   manager.prompting = prompting;
   manager.connect();
-}
 
-process.on("disconnect", () => processKiller(process));
-process.on("SIGINT", () => processKiller(process));
-process.on("SIGTERM", () => processKiller(process));
+  process.on("disconnect", () =>
+    processKiller(process, manager.broadcastEndSignal)
+  );
+  process.on("SIGINT", () =>
+    processKiller(process, manager.broadcastEndSignal)
+  );
+  process.on("SIGTERM", () =>
+    processKiller(process, manager.broadcastEndSignal)
+  );
+}
 
 start();
