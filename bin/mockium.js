@@ -2,6 +2,7 @@
 const program = require("commander");
 const processManager = require("../lib/cli/process-manager");
 const defaultConfig = require("../lib/cli/config");
+const optionsManager = require("../lib/cli/options-manager");
 
 async function start() {
   program
@@ -27,7 +28,9 @@ async function start() {
 
   const config = defaultConfig(program);
 
-  processManager.runProcess(config);
+  await optionsManager.create(process.cwd(), config);
+
+  processManager.runProcess(config, () => optionsManager.clear(process.cwd()));
 }
 
 start();
