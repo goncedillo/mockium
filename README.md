@@ -16,6 +16,7 @@ Install Mockium using [npm](https://www.npmjs.com/):
 ```bash
 npm i mockium
 ```
+
 You should notice that [stmux](https://github.com/rse/stmux) is installed as a global dependency too. It is a command-line tool which permits to Mockium to split and manage terminal activities throughout [tmux](https://github.com/tmux/tmux/wiki).
 
 ## Usage
@@ -28,14 +29,14 @@ mockium
 
 Other important optional parameter you can use as flag are the following:
 
-| Property | Default | |
-| ----------- | ----------- | ----------- |
-| --mockium-folder | ./mockium | Relative path to the mockium folder |
-| --features-folder | ./features | Relative path to the features folder from mockium folder |
-| --features-extension | feature | Extension chained to the feature file name |
-| --features-base | base | Name of the base feature file |
-| --server-port | 5000 | Port where the server will be deployed  |
-| --server-bridge-port | 5001 | Port where the socket server will be deployed  |
+| Property              | Default    |                                                          |
+| --------------------- | ---------- | -------------------------------------------------------- |
+| --mockium-folder      | ./mockium  | Relative path to the mockium folder                      |
+| --features-folder     | ./features | Relative path to the features folder from mockium folder |
+| --features-extension  | feature    | Extension chained to the feature file name               |
+| --features-base       | base       | Name of the base feature file                            |
+| --server-port         | 5000       | Port where the server will be deployed                   |
+| --server-bridge-port  | 5001       | Port where the socket server will be deployed            |
 
 ## Getting started
 
@@ -50,13 +51,14 @@ In Mockium, features are a group of mocks. It means that we can define diferent 
 
 These files has to accomplish the following model:
 
-| Property | Required | Type | Value |
-| ----------- | ----------- | ----------- |
-| name | * | *string* | Name of this feature |
-| description |  | *string* | Description of this feature |
-| mocks | * | *string []* | List of mock objects |
+| Property    | Required | Type     | Value                       |
+| ----------- | -------- | -------- | --------------------------- |
+| name        | \*       | _string_ | Name of this feature        |
+| description |          | _string_ | Description of this feature |
+| mocks       | \*       | _array_  | List of mock objects        |
 
 e.g.
+
 ```js
 {
     "name": "myFeature",
@@ -73,16 +75,16 @@ e.g.
 A mock object is presented as a real response to a server request.
 The mock's model has to respect some defined properties:
 
-| Property | Required | Type | Value |
-| ----------- | ----------- | ----------- | ----------- |
-| url | * | *string* | Server url which will be mocked. Query and url params are supported |
-| method | * | *string* | Http verb of the request (GET, POST, PUT ...) |
-| request |  | *object* | Properties related to the request |
-| request.headers |  | *object* | Map of request headers (key/value expected) |
-| request.body |  | *object* | Map of request sent values in a no GET format |
-| response | * | *object* | Properties related to the request |
-| response.status | * | *number/string* | Response Http code (200, 201, 400, 500 ...) |
-| response.body |  | *object/function* | Object with the response data of the request. OPtionally, It could be a function, which will be called to execute the response |
+| Property        | Required | Type              | Value                                                                                                                          |
+| --------------- | -------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| url             | \*       |  *string*         | Server url which will be mocked. Query and url params are supported                                                            |
+| method          | \*       | _string_          | Http verb of the request (GET, POST, PUT ...)                                                                                  |
+| request         |          | _object_          | Properties related to the request                                                                                              |
+| request.headers |          | _object_          | Map of request headers (key/value expected)                                                                                    |
+| request.body    |          | _object_          | Map of request sent values in a no GET format                                                                                  |
+| response        | \*       | _object_          | Properties related to the request                                                                                              |
+| response.status | \*       | _number/string_   | Response Http code (200, 201, 400, 500 ...)                                                                                    |
+| response.body   |          | _object/function_ | Object with the response data of the request. OPtionally, It could be a function, which will be called to execute the response |
 
 e.g:
 
@@ -126,7 +128,7 @@ project
 
 #### Feature files
 
-As convention, the library will be looking for files with ***feature*** as default subextension (e.g. *my_atonishing.**feature**.js*). Besides, you can always change this subextension using the optional *--features-extension* parameter exposing your preference.
+As convention, the library will be looking for files with **_feature_** as default subextension (e.g. _my_atonishing.**feature**.js_). Besides, you can always change this subextension using the optional _--features-extension_ parameter exposing your preference.
 
 ```bash
 mockium --features-extension my-flag
@@ -142,7 +144,7 @@ On the other hand, you are completely free to organize and name your mock files,
 Mockium needs to load a base feature as default. It is mandatory to use a base feature.<br>
 The reason is because the library have to deploy the regular services in order to cover the happy path. However, the rest of features will be loader on top of the base, overwritten or extending the endpoints registered as intial base.
 
-In order to change the name of the base feature file you need to use the *--features-base* flag as optional command:
+In order to change the name of the base feature file you need to use the _--features-base_ flag as optional command:
 
 ```bash
 mockium --features-base happypath
