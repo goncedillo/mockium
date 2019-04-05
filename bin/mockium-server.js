@@ -9,6 +9,7 @@ const logger = require("../lib/utils/console-logger");
 const SocketServer = require("../lib/server/SocketServer");
 const defaultConfig = require("../lib/cli/config");
 const processKiller = require("../lib/utils/process-killer");
+const optionsManager = require("../lib/cli/options-manager");
 
 async function start() {
   program
@@ -31,7 +32,7 @@ async function start() {
     )
     .parse(process.argv);
 
-  const config = defaultConfig(program);
+  const config = optionsManager.load(process.cwd()) || defaultConfig(program);
 
   const features = (await featuresLoader.load(
     config.featuresFolder,
