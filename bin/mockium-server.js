@@ -46,14 +46,30 @@ async function start() {
   const socketServer = new SocketServer(config);
   const serverManager = new ServerManager(server, socketServer, logger, {
     SERVER_PORT: config.serverPort,
-    DEFAULT_FEATURE: config.base
+    DEFAULT_FEATURE: config.base,
+    MOCKIUM_FOLDER: config.mockiumFolder
   });
 
   socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
     processKiller(process)
   );
 
+  serverManager.on(serverEvents.SERVER_SOCKET_CLOSED, () =>
+    reloadFeatures(serverManager, config)
+  );
+
   serverManager.startServer();
+  serverManager.watchChanges();
+}
+
+async function reloadFeatures(manager, config) {
+  const features = (await featuresLoader.load(
+    config.featuresFolder,
+    resources.getFeaturesFromPath,
+    `.${config.extension}.js`
+  )).filter(item => item.name);
+
+  manager.reloadServer(features);
 }
 
 process.on("disconnect", () => processKiller(process));
