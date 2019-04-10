@@ -9,7 +9,8 @@
     "mockium_server": "./bin/mockium-server.js"
   },
   "scripts": {
-    "preinstall": "npm i -g stmux"
+    "preinstall": "npm i -g stmux",
+    "test": "jest --watch"
   },
   "keywords": [
     "mock",
@@ -43,6 +44,7 @@
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
     "husky": "^1.3.1",
+    "jest": "^24.7.1",
     "lint-staged": "^8.1.5",
     "prettier": "^1.16.4"
   }
