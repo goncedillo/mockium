@@ -10,7 +10,8 @@
   },
   "scripts": {
     "preinstall": "npm i -g stmux",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [
     "mock",

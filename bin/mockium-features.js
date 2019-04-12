@@ -56,7 +56,7 @@ async function start() {
   const prompting = new Prompting(features, menuOptions);
 
   manager.prompting = prompting;
-  manager.connect();
+  manager.connect(manager.reconnect);
 
   process.on("disconnect", () =>
     processKiller(process, manager.broadcastEndSignal)
