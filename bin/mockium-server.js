@@ -54,9 +54,9 @@ async function start() {
     processKiller(process)
   );
 
-  serverManager.on(serverEvents.SERVER_SOCKET_CLOSED, () =>
-    reloadFeatures(serverManager, config)
-  );
+  serverManager.on(serverEvents.SERVER_FILES_CHANGED, () => {
+    reloadFeatures(serverManager, config);
+  });
 
   serverManager.startServer();
   serverManager.watchChanges();
