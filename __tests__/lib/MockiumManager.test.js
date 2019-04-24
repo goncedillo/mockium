@@ -87,9 +87,13 @@ describe("Connecting with socket server", () => {
       MAIN_MENU_MESSAGE: "MAIN"
     };
 
+    jest.useFakeTimers();
+
     manager = new MockiumManager({ socketPort: 100 }, [], messagesFake);
     manager.prompting = promptingFake;
     manager.connect();
+
+    jest.runAllTimers();
 
     currentWS = Websocket.mock.instances[Websocket.mock.instances.length - 1];
   });
@@ -123,13 +127,9 @@ describe("Connecting with socket server", () => {
   });
 
   it("should try to reconnect after 1s when connection is closed", () => {
-    setTimeout = jest.fn();
-
     currentWS.onclose();
 
-    expect(setTimeout).toHaveBeenCalledWith(manager.reconnect, 1000);
-
-    setTimeout.mockRestore();
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 1000);
   });
 });
 
@@ -139,6 +139,8 @@ describe("Reconnection", () => {
   beforeEach(() => {
     manager = new MockiumManager();
     manager.connect = jest.fn();
+
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -146,18 +148,35 @@ describe("Reconnection", () => {
   });
 
   it("should call to connect again if it has tried less than 5 tries", () => {
-    manager.reconnect();
+    manager.connect();
+
+    jest.runAllTimers();
+
+    Websocket.mock.instances[Websocket.mock.instances.length - 1].onclose();
 
     expect(manager.connect).toHaveBeenCalled();
   });
 
   it("should not call to connect again if it has tried more than 5 tries", () => {
+    manager.connect();
+
     manager.reconnect();
+    jest.runAllTimers();
+
     manager.reconnect();
+    jest.runAllTimers();
+
     manager.reconnect();
+    jest.runAllTimers();
+
     manager.reconnect();
+    jest.runAllTimers();
+
     manager.reconnect();
+    jest.runAllTimers();
+
     manager.reconnect();
+    jest.runAllTimers();
 
     expect(manager.connect).toHaveBeenCalledTimes(5);
   });
@@ -201,10 +220,11 @@ describe("Heading to main menu", () => {
 
   it("should log the feature message when feature is selected", () => {
     manager.prompting = promptingFake;
-    manager.connect();
-    manager.goToFeatureSelected("foo");
 
-    manager.goToMainMenu();
+    manager.connect();
+    jest.runAllTimers();
+
+    manager.goToFeatureSelected("foo");
 
     expect(logger.printCurrentFeature).toHaveBeenCalled();
   });
@@ -325,6 +345,7 @@ describe("Feature has been selected", () => {
     manager.goToMainMenu = jest.fn();
 
     manager.connect();
+    jest.runAllTimers();
     manager.goToFeatureSelected(feature);
   });
 
@@ -351,7 +372,6 @@ describe("Feature has been selected", () => {
 
 describe("Emit end signal", () => {
   let manager;
-  let feature;
 
   beforeEach(() => {
     manager = new MockiumManager(configFake);
@@ -362,6 +382,7 @@ describe("Emit end signal", () => {
     };
 
     manager.connect();
+    jest.runAllTimers();
   });
 
   it("should broadcast finish signal", () => {
@@ -375,5 +396,71 @@ describe("Emit end signal", () => {
     manager.broadcastEndSignal();
 
     expect(currentWs.send).toHaveBeenCalledWith(finishEvent);
+  });
+});
+
+describe("Testing features updating", () => {
+  let manager;
+  let promptingMockUpdate;
+
+  beforeEach(() => {
+    manager = new MockiumManager(configFake);
+
+    promptingMockUpdate = jest.fn();
+
+    manager.prompting = {
+      getMainMenu: () => {},
+      on: () => {},
+      updateFeatures: promptingMockUpdate
+    };
+
+    manager.connect();
+    jest.runAllTimers();
+  });
+
+  afterEach(() => {
+    promptingMockUpdate.mockRestore();
+  });
+
+  it("should update promptter with new features", () => {
+    const features = ["foo", "bar"];
+
+    manager.updateFeatures(features);
+
+    expect(promptingMockUpdate).toHaveBeenCalledWith(
+      features,
+      expect.any(Function)
+    );
+  });
+});
+
+describe("Testing WS message handling", () => {
+  let manager;
+  beforeEach(() => {
+    manager = new MockiumManager(configFake);
+
+    manager.updateFeatures = jest.fn();
+  });
+
+  afterEach(() => {
+    manager.updateFeatures.mockRestore();
+  });
+
+  it("should update features when it receives a FILES event", () => {
+    const payload = {
+      data: JSON.stringify({ type: "FILES" })
+    };
+
+    manager.handleWSMessage(payload);
+
+    expect(manager.updateFeatures).toHaveBeenCalled();
+  });
+
+  it("should do nothing by default", () => {
+    const payload = {
+      data: JSON.stringify({ type: "" })
+    };
+
+    expect(manager.handleWSMessage(payload)).toBeUndefined();
   });
 });
