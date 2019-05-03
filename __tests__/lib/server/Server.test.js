@@ -18,14 +18,8 @@ describe("Testing server", () => {
     express.use = jest.fn();
   });
 
-  beforeEach(() => {
+  afterEach(() => {
     express.use.mockRestore();
-  });
-
-  it("should get an express server as app", () => {
-    const server = new Server();
-
-    expect(typeof server.app.use === "function").toBe(true);
   });
 
   it("should parse features grouping all its mocks", () => {
@@ -67,8 +61,20 @@ describe("Testing features middleware", () => {
   let feature2;
   let mockGroup1;
   let mockGroup2;
+  let bodyFn;
 
   beforeEach(() => {
+    bodyFn = jest.fn().mockReturnValue(() => [
+      {
+        id: 1,
+        name: "Pepe"
+      },
+      {
+        id: 2,
+        name: "Antonio"
+      }
+    ]);
+
     mock1 = {
       url: "/foo",
       method: "GET",
@@ -85,16 +91,7 @@ describe("Testing features middleware", () => {
       method: "GET",
       response: {
         status: 200,
-        body: () => [
-          {
-            id: 1,
-            name: "Pepe"
-          },
-          {
-            id: 2,
-            name: "Antonio"
-          }
-        ]
+        body: bodyFn
       }
     };
     mock3 = {
@@ -105,9 +102,18 @@ describe("Testing features middleware", () => {
         body: {}
       }
     };
+    mock4 = {
+      url: "/abb",
+      method: "POST",
+      response: {
+        status: 201,
+        body: null
+      }
+    };
     mockGroup1 = {
       mock1,
-      mock2
+      mock2,
+      mock4
     };
     mockGroup2 = {
       mock3
@@ -131,10 +137,188 @@ describe("Testing features middleware", () => {
 
     const nextMock = jest.fn();
 
-    const server = new Server([feature1, feature2]);
+    const server = new Server();
+    server.features = [feature1, feature2];
     server.currentFeature = "f1";
     server.featuresMiddleware(req, {}, nextMock);
 
     expect(nextMock).toHaveBeenCalled();
+  });
+
+  it("should send the mock's status as response", () => {
+    const req = {
+      method: "GET",
+      url: "/foo"
+    };
+
+    const res = {
+      status: jest.fn().mockReturnValue({
+        json: () => {}
+      })
+    };
+
+    const server = new Server([feature1, feature2]);
+    server.currentFeature = "f1";
+
+    server.featuresMiddleware(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it("should send response with body as object", () => {
+    const req = {
+      method: "GET",
+      url: "/foo"
+    };
+    const fake = jest.fn();
+
+    const res = {
+      status: () => ({
+        json: fake
+      })
+    };
+
+    const server = new Server([feature1, feature2]);
+    server.currentFeature = "f1";
+
+    server.featuresMiddleware(req, res);
+
+    expect(fake).toHaveBeenCalledWith(mock1.response.body);
+  });
+
+  it("should send response with empty object when body is null", () => {
+    const req = {
+      method: "POST",
+      url: "/abb"
+    };
+    const fake = jest.fn();
+
+    const res = {
+      status: () => ({
+        json: fake
+      })
+    };
+
+    const server = new Server([feature1, feature2]);
+    server.currentFeature = "f1";
+
+    server.featuresMiddleware(req, res);
+
+    expect(fake).toHaveBeenCalledWith({});
+  });
+
+  it("should contruct response body as function", () => {
+    const req = {
+      method: "GET",
+      url: "/bar"
+    };
+    const res = {
+      status: () => ({
+        json: () => {}
+      })
+    };
+
+    const server = new Server([feature1, feature2]);
+    server.currentFeature = "f1";
+
+    server.featuresMiddleware(req, res);
+
+    expect(bodyFn).toHaveBeenCalled();
+  });
+});
+
+describe("Test starting server", () => {
+  let server;
+
+  beforeEach(() => {
+    server = new Server();
+
+    express.mockReturnValue({
+      use: () => {},
+      listen: () => {}
+    });
+  });
+
+  afterEach(() => {
+    express.mockRestore();
+  });
+
+  it("should start an express app", () => {
+    server.start({ SERVER_PORT: 2000 });
+
+    expect(express).toHaveBeenCalled();
+    expect(typeof server.app).toEqual("object");
+  });
+});
+
+describe("Test running server", () => {
+  let server;
+  let config;
+  let listenFn;
+  let emitFn;
+
+  beforeEach(() => {
+    config = { SERVER_PORT: 2000 };
+
+    listenFn = jest.fn();
+    emitFn = jest.fn();
+
+    express.mockReturnValue({
+      use: () => {},
+      listen: listenFn
+    });
+
+    server = new Server();
+    server.emit = emitFn;
+    server.start(config);
+  });
+
+  afterEach(() => {
+    express.mockRestore();
+  });
+
+  it("should remove previous listeners", () => {
+    expect(listenFn).toHaveBeenCalledWith(
+      config.SERVER_PORT,
+      expect.any(Function)
+    );
+  });
+
+  it("should notify that it is started", () => {
+    server.notifyStartedServer();
+
+    expect(emitFn).toHaveBeenCalled();
+  });
+});
+
+describe("Test stopping server", () => {
+  let server;
+  let config;
+  let closeFn;
+
+  beforeEach(() => {
+    config = { SERVER_PORT: 2000 };
+
+    closeFn = jest.fn();
+
+    express.mockReturnValue({
+      use: () => {},
+      listen: () => ({
+        close: closeFn
+      })
+    });
+
+    server = new Server();
+    server.start(config);
+  });
+
+  afterEach(() => {
+    express.mockRestore();
+  });
+
+  it("should stop the server", () => {
+    server.stop();
+
+    expect(closeFn).toHaveBeenCalled();
   });
 });
