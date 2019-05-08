@@ -30,7 +30,7 @@ async function start() {
 
   await optionsManager.create(process.cwd(), config);
 
-  processManager.runProcess(config, () => optionsManager.clear(process.cwd()));
+  processManager.runProcess(() => optionsManager.clear(process.cwd()));
 }
 
 start();
