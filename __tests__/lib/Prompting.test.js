@@ -7,6 +7,8 @@ const PromptingEvent = require("../../lib/utils/PromptingEvents");
 jest.mock("inquirer");
 
 let prompting;
+let BottomBarFn;
+let updateBottomBarFn;
 
 beforeAll(() => {
   const menuOptions = [
@@ -19,6 +21,15 @@ beforeAll(() => {
       value: "two"
     }
   ];
+
+  updateBottomBarFn = jest.fn();
+
+  BottomBarFn = jest.fn().mockImplementation(() => ({
+    updateBottomBar: updateBottomBarFn
+  }));
+
+  inquirer.ui.BottomBar = BottomBarFn;
+
   prompting = new Prompting(["one", "two"], menuOptions);
 });
 
@@ -28,6 +39,8 @@ afterAll(() => {
   if (prompting.emit.mock) {
     prompting.emit.mockRestore();
   }
+
+  inquirer.ui.BottomBar.mockRestore();
 });
 
 describe("Main Menu formation", () => {
@@ -94,5 +107,25 @@ describe("Listing features menu", () => {
       PromptingEvent.FEATURE_MENU_SELECTED
     );
     expect(prompting.emit.mock.calls[0][1]).toEqual("one");
+  });
+});
+
+describe("Testing update features", () => {
+  it("should update CLI interface with given printer", () => {
+    const spy = jest.fn();
+
+    prompting.updateFeatures([], spy);
+
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it("should clean the message area after a time", () => {
+    jest.useFakeTimers();
+
+    prompting.updateFeatures([], () => {});
+
+    jest.runAllTimers();
+
+    expect(updateBottomBarFn).toHaveBeenCalled();
   });
 });
