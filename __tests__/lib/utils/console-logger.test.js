@@ -139,5 +139,25 @@ describe("print feature description", () => {
     logger.printFeatureDescription(target);
 
     expect(spy.mock.calls[0][0].search(target)).toBeTruthy();
+
+    jest.restoreAllMocks();
+  });
+});
+
+describe("Testing reload by change file", () => {
+  it("should print in console when file changes", () => {
+    const spy = jest.spyOn(console, "log");
+
+    logger.printReloadManagerByFileChange();
+
+    expect(spy).toHaveBeenCalled();
+
+    jest.restoreAllMocks();
+  });
+});
+
+describe("Testing message when files upload", () => {
+  it("should get a message", () => {
+    expect(typeof logger.printFeaturesUpdated() === "string").toBe(true);
   });
 });
