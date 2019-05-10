@@ -34,3 +34,5 @@ async function start() {
 }
 
 start();
+
+module.exports = start;
