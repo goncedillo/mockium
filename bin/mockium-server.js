@@ -77,3 +77,5 @@ process.on("SIGINT", () => processKiller(process));
 process.on("SIGTERM", () => processKiller(process));
 
 start();
+
+module.exports = start;
