@@ -60,6 +60,10 @@ async function start() {
 
   serverManager.startServer();
   serverManager.watchChanges();
+
+  process.on("disconnect", () => processKiller(process));
+  process.on("SIGINT", () => processKiller(process));
+  process.on("SIGTERM", () => processKiller(process));
 }
 
 async function reloadFeatures(manager, config) {
@@ -71,10 +75,6 @@ async function reloadFeatures(manager, config) {
 
   manager.reloadServer(features);
 }
-
-process.on("disconnect", () => processKiller(process));
-process.on("SIGINT", () => processKiller(process));
-process.on("SIGTERM", () => processKiller(process));
 
 start();
 

@@ -30,16 +30,14 @@ afterAll(() => {
 describe("Testing mockium server", () => {
   let startServerFn;
   let watchChangesFn;
-  let loadFeaturesFn;
   let serverOnFn;
   let socketOnFn;
-  let processKillerFn;
+  let processOnFn;
 
   beforeEach(() => {
     startServerFn = jest.fn();
     watchChangesFn = jest.fn();
-    loadFeaturesFn = jest.fn();
-    processKillerFn = jest.fn();
+    processOnFn = jest.fn().mockImplementation((ev, cb) => cb());
     serverOnFn = jest.fn().mockImplementation((ev, cb) => cb());
     socketOnFn = jest.fn().mockImplementation((ev, cb) => cb());
 
@@ -56,12 +54,28 @@ describe("Testing mockium server", () => {
     processKiller.mockImplementation(() => {});
 
     featuresLoader.load = jest.fn().mockReturnValue([1]);
+
+    process.on = processOnFn;
+  });
+
+  afterEach(() => {
+    ServerManager.mockRestore();
+    SocketServer.mockRestore();
+    processKiller.mockRestore();
+    featuresLoader.load.mockRestore();
+    process.on.mockRestore();
   });
 
   it("should start server manager", async () => {
     await mockiumServer();
 
     expect(startServerFn).toHaveBeenCalled();
+  });
+
+  it("should watch for file changes", async () => {
+    await mockiumServer();
+
+    expect(watchChangesFn).toHaveBeenCalled();
   });
 
   it("should listen to socket when finish event is triggered", async () => {
@@ -71,5 +85,26 @@ describe("Testing mockium server", () => {
       serverEvents.SERVER_FORCE_FINISH,
       expect.any(Function)
     );
+  });
+
+  it("should listen to disconnect event", async () => {
+    await mockiumServer();
+
+    expect(processOnFn).toHaveBeenCalledWith(
+      "disconnect",
+      expect.any(Function)
+    );
+  });
+
+  it("should listen to SIGINT event", async () => {
+    await mockiumServer();
+
+    expect(processOnFn).toHaveBeenCalledWith("SIGINT", expect.any(Function));
+  });
+
+  it("should listen to SIGTERM event", async () => {
+    await mockiumServer();
+
+    expect(processOnFn).toHaveBeenCalledWith("SIGTERM", expect.any(Function));
   });
 });
