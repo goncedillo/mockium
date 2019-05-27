@@ -229,6 +229,21 @@ describe("Heading to main menu", () => {
     expect(logger.printCurrentFeature).toHaveBeenCalled();
   });
 
+  it("should clear terminal when feature is selected", () => {
+    manager.prompting = promptingFake;
+
+    manager.connect();
+    jest.runAllTimers();
+
+    clearFn = jest.fn();
+
+    clearTerminal.mockImplementation(clearFn);
+
+    manager.goToFeatureSelected();
+
+    expect(clearFn).toHaveBeenCalled();
+  });
+
   it("should not log the feature message when feature is selected", () => {
     manager.prompting = promptingFake;
     manager.connect();
@@ -420,6 +435,19 @@ describe("Testing features updating", () => {
 
   afterEach(() => {
     promptingMockUpdate.mockRestore();
+  });
+
+  it("should update promptter", () => {
+    const features = [{ name: "foo" }];
+
+    manager.currentFeature = "foo";
+
+    manager.updateFeatures(features);
+
+    expect(promptingMockUpdate).toHaveBeenCalledWith(
+      features,
+      expect.any(Function)
+    );
   });
 
   it("should update promptter with new features", () => {
