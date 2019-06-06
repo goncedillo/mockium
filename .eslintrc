@@ -1,4 +1,10 @@
 {
     "extends": ["plugin:prettier/recommended"],
-    "parser": "babel-eslint"
+    "parser": "babel-eslint",
+    "overrides": [
+        {
+            "files": "**/*.js",
+            "excludedFiles": "**/node_modules/*"
+        }
+    ]
 }

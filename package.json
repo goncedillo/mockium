@@ -11,7 +11,8 @@
   "scripts": {
     "preinstall": "npm i -g stmux",
     "test": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "lint": "eslint ."
   },
   "keywords": [
     "mock",
