@@ -10,10 +10,11 @@
   },
   "scripts": {
     "preinstall": "npm i -g stmux",
-    "test": "jest",
+    "test": "jest --coverage",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "keywords": [
     "mock",
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
+    "coveralls": "^3.0.4",
     "eslint": "^5.15.3",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",

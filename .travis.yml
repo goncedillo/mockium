@@ -7,6 +7,7 @@ jobs:
       script:
         - npm run lint
         - npm t
+        - npm run coveralls
       deploy:
         provider: npm
         email: $NPM_USER
@@ -14,5 +15,3 @@ jobs:
         on:
           branch: master
           tags: true
-      after_success: echo "Genial!"
-      after_failure: echo "Oooh!"
