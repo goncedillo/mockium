@@ -15,7 +15,7 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "changelog": "auto-changelog -p --template keepachangelog && git add CHANGELOG.md"
+    "version": "auto-changelog -p --template keepachangelog && git add CHANGELOG.md"
   },
   "keywords": [
     "mock",
