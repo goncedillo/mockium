@@ -1,6 +1,6 @@
 {
   "name": "mockium",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Versatile, scalable and adaptable mock server based on the simplicity of mocking API requests.",
   "main": "index.js",
   "bin": {
