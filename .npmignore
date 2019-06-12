@@ -1,0 +1,6 @@
+.eslint*
+.husky
+.lintstagedrc
+.travis.yml
+__tests__
+coverage
