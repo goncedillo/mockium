@@ -13,5 +13,4 @@ jobs:
         email: $NPM_USER
         api_key: $NPM_AUTH_KEY
         on:
-          branch: master
           tags: true
