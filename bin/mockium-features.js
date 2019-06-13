@@ -36,7 +36,7 @@ async function start() {
 
   const features = (await featuresLoader.load(
     config.featuresFolder,
-    resources.getFeaturesFromPath,
+    (path, extension) => resources.getResourcesFromPath(path, extension),
     `.${config.extension}.js`
   )).filter(item => item.name);
   const manager = new MockiumManager(config, features, promptingMessages);

@@ -173,4 +173,17 @@ describe("Testing changing feature", () => {
 
     expect(logger.printReloadManagerByFileChange).toHaveBeenCalled();
   });
+
+  it("should change feature in server when update file", () => {
+    const changeFn = jest.fn();
+    const manager = new ServerManager(server, socketServer, logger);
+
+    manager.changeFeature = changeFn;
+
+    manager.notifyManagerUpdated();
+
+    expect(changeFn).toHaveBeenCalled();
+
+    manager.changeFeature.mockRestore();
+  });
 });

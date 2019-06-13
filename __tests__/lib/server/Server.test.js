@@ -129,6 +129,14 @@ describe("Testing features middleware", () => {
     };
   });
 
+  it("should get right feature selected", () => {
+    const server = new Server();
+    server.features = [feature1, feature2];
+    server.currentFeature = "f1";
+
+    expect(server.currentFeature === feature1.name);
+  });
+
   it("should call next function when no feature is matched", () => {
     const req = {
       method: "PUT",

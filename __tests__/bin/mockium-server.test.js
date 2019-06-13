@@ -53,7 +53,12 @@ describe("Testing mockium server", () => {
 
     processKiller.mockImplementation(() => {});
 
-    featuresLoader.load = jest.fn().mockReturnValue([1]);
+    featuresLoader.load = jest
+      .fn()
+      .mockImplementation((folder, extractor, extension) => {
+        extractor();
+        return [1];
+      });
 
     process.on = processOnFn;
   });
