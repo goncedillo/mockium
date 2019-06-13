@@ -34,7 +34,6 @@ Other important optional parameter you can use as flag are the following:
 
 | Property              | Default    |                                                          |
 | --------------------- | ---------- | -------------------------------------------------------- |
-| --mockium-folder      | ./mockium  | Relative path to the mockium folder                      |
 | --features-folder     | ./features | Relative path to the features folder from mockium folder |
 | --features-extension  | feature    | Extension chained to the feature file name               |
 | --features-base       | base       | Name of the base feature file                            |
