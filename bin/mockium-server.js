@@ -36,9 +36,15 @@ async function start() {
 
   const config = optionsManager.load(process.cwd()) || defaultConfig(program);
 
+  await featuresLoader.load(
+    config.mocksFolder,
+    (path, extension) => resources.getResourcesFromPath(path, extension),
+    `.${config.mocksExtension}.js`
+  );
+
   const features = (await featuresLoader.load(
     config.featuresFolder,
-    resources.getFeaturesFromPath,
+    (path, extension) => resources.getResourcesFromPath(path, extension),
     `.${config.extension}.js`
   )).filter(item => item.name);
 
@@ -67,9 +73,15 @@ async function start() {
 }
 
 async function reloadFeatures(manager, config) {
+  await featuresLoader.load(
+    config.mocksFolder,
+    (path, extension) => resources.getResourcesFromPath(path, extension),
+    `.${config.mocksExtension}.js`
+  );
+
   const features = (await featuresLoader.load(
     config.featuresFolder,
-    resources.getFeaturesFromPath,
+    (path, extension) => resources.getResourcesFromPath(path, extension),
     `.${config.extension}.js`
   )).filter(item => item.name);
 

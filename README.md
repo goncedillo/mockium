@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/goncedillo/mockium.svg?branch=master)](https://travis-ci.com/goncedillo/mockium)
+[![Coverage Status](https://coveralls.io/repos/github/goncedillo/mockium/badge.svg?branch=master)](https://coveralls.io/github/goncedillo/mockium?branch=master)
+
 <div style="text-align: center;">
     <img alt="mockium-logo" src="https://drive.google.com/uc?export=view&id=1XIatwEA1_4Q2g0S1_-QY4ISbUWsxdeW-">
 </div>
@@ -31,7 +34,6 @@ Other important optional parameter you can use as flag are the following:
 
 | Property              | Default    |                                                          |
 | --------------------- | ---------- | -------------------------------------------------------- |
-| --mockium-folder      | ./mockium  | Relative path to the mockium folder                      |
 | --features-folder     | ./features | Relative path to the features folder from mockium folder |
 | --features-extension  | feature    | Extension chained to the feature file name               |
 | --features-base       | base       | Name of the base feature file                            |
