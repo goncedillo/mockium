@@ -50,11 +50,12 @@ describe("Testing process runner", () => {
   });
 
   it("should execute callback when options are given", () => {
+    const spy = jest.fn();
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess({});
+    runner.runProcess(spy);
 
-    expect(nextTickFn).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalled();
   });
 
   it("should show a message in prompt before exit", () => {
