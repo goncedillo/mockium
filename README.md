@@ -1,16 +1,41 @@
 [![Build Status](https://travis-ci.com/goncedillo/mockium.svg?branch=master)](https://travis-ci.com/goncedillo/mockium)
 [![Coverage Status](https://coveralls.io/repos/github/goncedillo/mockium/badge.svg?branch=master)](https://coveralls.io/github/goncedillo/mockium?branch=master)
 
-<div style="text-align: center;">
+<p align="center">
     <img alt="mockium-logo" src="https://drive.google.com/uc?export=view&id=1XIatwEA1_4Q2g0S1_-QY4ISbUWsxdeW-">
-</div>
+</p>
 
-Mockium is a simple but powerful CLI mock server based on Node.js technologies.<br >
-Its main purpouse is to offer to developers the posibility of building up their own mock-server managed in an easy and confortable way.<br >
+Mockium is a simple but powerful CLI mock server based on Node.js technology.<br >
+Its main purpouse is to offer to developers the posibility of building up their own mock-server in an easy and confortable way.<br >
 
-Surprisingly, you will see the server running in your terminal, with all the logs that you could expect to, as well as a CLI aside letting you to switch among diferents features in live. No reload is required.
+Surprisingly, you will see the server running in your terminal, with all the logs that you could expect, as well as a CLI aside letting you to switch among diferents features in live. No reload is required.
 
 **Mocking is cool!**
+
+## Table of Contents
+
+1. [Why should I use Mockium?](#Why-should-I-use-Mockium?)
+2. [Installation](#installation)
+3. [Usage](#usage)
+4. [Getting started](#getting-started)
+5. [Feature](#features)
+6. [Mock](#mocks)
+7. [Scaffolding](#Scaffolding)
+
+## Why should I use Mockium?
+
+There are a lot of mock server in the Node.js ecosystem. Most of them, great packages with a lot features.
+Besides, Mockium offers us a simple way to load our mocks with minimum rules, plus the following characteristics:
+
+- Simple installation and boostrap
+- Easy way to mock your server responses
+- Scalable way to extend features and mocks
+- **Hot feature exchange**. Choose your feature in live. No reloads are needed
+- **Hot mock and features reloading**. You can extend and modify your mocks and features without having to stop an restart the process
+
+<p align="center">
+    <img alt="mockium-logo" src="https://drive.google.com/uc?export=view&id=1OlIK_c5-De-gpgeWjUQA8gnQ3KNHOcqa">
+</p>
 
 ## Installation
 
@@ -20,9 +45,9 @@ Install Mockium using [npm](https://www.npmjs.com/):
 npm i mockium
 ```
 
-You should notice that [stmux](https://github.com/rse/stmux) is installed as a global dependency too. It is a command-line tool which permits to Mockium to split and manage terminal activities throughout [tmux](https://github.com/tmux/tmux/wiki).
+You will notice that [stmux](https://github.com/rse/stmux) is installed as a global dependency too. It is a command-line tool which permits to Mockium to split and manage terminal activities throughout [tmux](https://github.com/tmux/tmux/wiki).
 
-## Usage
+## Usage
 
 Just one command and the magic happens:
 
@@ -30,13 +55,15 @@ Just one command and the magic happens:
 mockium
 ```
 
-Other important optional parameter you can use as flag are the following:
+Other important and optional parameters that you can use as flag, are the following ones:
 
 | Property              | Default    |                                                          |
 | --------------------- | ---------- | -------------------------------------------------------- |
 | --features-folder     | ./features | Relative path to the features folder from mockium folder |
+| --mocks-folder        | ./mocks    | Relative path to the mocks folder from mockium folder    |
 | --features-extension  | feature    | Extension chained to the feature file name               |
-| --features-base       | base       | Name of the base feature file                            |
+| --mocks-extension     | mock       | Extension chained to the mock file name                  |
+| --feature-base        | base       | Name of the base feature file                            |
 | --server-port         | 5000       | Port where the server will be deployed                   |
 | --server-bridge-port  | 5001       | Port where the socket server will be deployed            |
 
@@ -45,11 +72,11 @@ Other important optional parameter you can use as flag are the following:
 Mockium needs to be fed with feature files.
 All the structure and extensions showed in this manual are completly optionals. They all can be overwritten by command params.
 
-There are two main actors: **features** and **mocks** files. They perform the actual framework of this module.
+The server has two main actors: **features** and **mocks** files. They perform the actual framework of this module.
 
 ### Features
 
-In Mockium, features are a group of mocks. It means that we can define diferent features using (even reusing) diferent mock files and reuse them.
+In Mockium, features are a group of mocks. It means that we can define diferent features using diferent mock files and reuse them.
 
 These files has to accomplish the following model:
 
@@ -64,6 +91,7 @@ e.g.
 ```js
 {
     "name": "myFeature",
+    "description": "The awesome data that this feature contains",
     "mocks": [
         mock1,
         mock2,
@@ -86,7 +114,7 @@ The mock's model has to respect some defined properties:
 | request.body    |          | _object_          | Map of request sent values in a no GET format                                                                                  |
 | response        | \*       | _object_          | Properties related to the request                                                                                              |
 | response.status | \*       | _number/string_   | Response Http code (200, 201, 400, 500 ...)                                                                                    |
-| response.body   |          | _object/function_ | Object with the response data of the request. OPtionally, It could be a function, which will be called to execute the response |
+| response.body   |          | _object/function_ | Object with the response data of the request. Optionally, It could be a function, which will be called to execute the response |
 
 e.g:
 
@@ -114,7 +142,7 @@ e.g:
 
 Mockium gives you whole freedom to organize your features and mocks as you want. No rules are defined at this point.
 
-The library proposes a scaffolding, but you are completly free of choosing whatever you think fits better for your project:
+The library proposes a scaffolding, but you are completly free of choosing whichever you think that fits better for your project:
 
 ```
 project
@@ -139,12 +167,12 @@ mockium --features-extension my-flag
 
 #### Mock files
 
-On the other hand, you are completely free to organize and name your mock files, since they will be imported into the features.
+However, you are completely free to organize and name your mock files, since they will be imported into the features.
 
 #### Feature base
 
 Mockium needs to load a base feature as default. It is mandatory to use a base feature.<br>
-The reason is because the library have to deploy the regular services in order to cover the happy path. However, the rest of features will be loader on top of the base, overwritten or extending the endpoints registered as intial base.
+The reason is because the library have to deploy the regular services in order to cover, at least, the happy path. However, the rest of the features will be loaded on top of the base, overwritten or extending the endpoints registered as intial base feature.
 
 In order to change the name of the base feature file you need to use the _--features-base_ flag as optional command:
 
