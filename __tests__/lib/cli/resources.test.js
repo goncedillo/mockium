@@ -1,4 +1,3 @@
-const fs = require("fs");
 const path = require("path");
 const resourceExtractor = require("../../../lib/utils/resource-extractor");
 const resources = require("../../../lib/cli/resources");
@@ -28,11 +27,13 @@ describe("Testing resources loader", () => {
     resourceExtractor.listPath.mockRestore();
   });
 
-  it("should load mocks", async () => {
-    await expect(resources.getMocksFromPath("foo")).resolves.toBeTruthy();
+  it("should load features", async () => {
+    await expect(resources.getResourcesFromPath("foo")).resolves.toBeTruthy();
   });
 
-  it("should load features", async () => {
-    await expect(resources.getFeaturesFromPath("foo")).resolves.toBeTruthy();
+  it("should throw an exception if something is wrong", async () => {
+    listPathFn.mockRejectedValue(new Error("fail"));
+
+    await expect(resources.getResourcesFromPath("foo")).rejects.toThrow("fail");
   });
 });

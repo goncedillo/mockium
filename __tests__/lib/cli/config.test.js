@@ -3,9 +3,10 @@ const configGenerator = require("../../../lib/cli/config");
 describe("Testing configuration data", () => {
   it("should return default values when nothing is given", () => {
     const expected = {
-      mockiumFolder: ".",
+      mocksFolder: "mocks",
       featuresFolder: "features",
       extension: "feature",
+      mocksExtension: "mock",
       base: "base",
       serverPort: 5000,
       socketPort: 5001
@@ -16,7 +17,7 @@ describe("Testing configuration data", () => {
 
   it("should overwrite default values", () => {
     const sent = {
-      mockiumFolder: ".",
+      mocksFolder: "mocks1",
       featuresFolder: "featuresOv",
       featuresExtension: "featureOv",
       featuresBase: "base",
@@ -25,9 +26,10 @@ describe("Testing configuration data", () => {
     };
 
     const expected = {
-      mockiumFolder: ".",
+      mocksFolder: "mocks1",
       featuresFolder: "featuresOv",
       extension: "featureOv",
+      mocksExtension: "mock",
       base: "base",
       serverPort: 7000,
       socketPort: 7001
