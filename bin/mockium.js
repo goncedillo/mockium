@@ -7,6 +7,10 @@ const optionsManager = require("../lib/cli/options-manager");
 async function start() {
   program
     .option(
+      "-f, --features-folder <folder name>",
+      "Features directory relative path (default: features)"
+    )
+    .option(
       "-m, --mocks-folder <mocks folder>",
       "Mocks directory relative path (default: mocks)"
     )
@@ -29,10 +33,6 @@ async function start() {
     .option(
       "-s, --server-bridge-port <socket port>",
       "Port where the socket server will be deployed"
-    )
-    .option(
-      "-f, --features-folder <folder name>",
-      "Features directory relative path (default: features)"
     )
     .parse(process.argv);
 

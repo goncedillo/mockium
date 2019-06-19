@@ -9,6 +9,7 @@ const featuresLoader = require("../lib/utils/features-loader");
 const processKiller = require("../lib/utils/process-killer");
 const defaultConfig = require("../lib/cli/config");
 const optionsManager = require("../lib/cli/options-manager");
+const logger = require("../lib/utils/console-logger");
 
 async function start() {
   program
@@ -44,39 +45,46 @@ async function start() {
 
   const config = optionsManager.load(process.cwd()) || defaultConfig(program);
 
-  const features = (await featuresLoader.load(
-    config.featuresFolder,
-    (path, extension) => resources.getResourcesFromPath(path, extension),
-    `.${config.extension}.js`
-  )).filter(item => item.name);
-  const manager = new MockiumManager(config, features, promptingMessages);
-  const menuOptions = [
-    {
-      name: "Change feature",
-      value: "feature",
-      go: () => manager.goToFeatureSelection()
-    },
-    {
-      name: "Exit",
-      value: "exit",
-      go: () => process.kill(process.ppid)
-    }
-  ];
+  try {
+    const features = (await featuresLoader.load(
+      config.featuresFolder,
+      (path, extension) => resources.getResourcesFromPath(path, extension),
+      `.${config.extension}.js`
+    )).filter(item => item.name);
+    const manager = new MockiumManager(config, features, promptingMessages);
+    const menuOptions = [
+      {
+        name: "Change feature",
+        value: "feature",
+        go: () => manager.goToFeatureSelection()
+      },
+      {
+        name: "Exit",
+        value: "exit",
+        go: () => process.kill(process.ppid)
+      }
+    ];
 
-  const prompting = new Prompting(features, menuOptions);
+    const prompting = new Prompting(features, menuOptions);
 
-  manager.prompting = prompting;
-  manager.connect(manager.reconnect);
+    manager.prompting = prompting;
+    manager.connect(manager.reconnect);
 
-  process.on("disconnect", () =>
-    processKiller(process, manager.broadcastEndSignal)
-  );
-  process.on("SIGINT", () =>
-    processKiller(process, manager.broadcastEndSignal)
-  );
-  process.on("SIGTERM", () =>
-    processKiller(process, manager.broadcastEndSignal)
-  );
+    process.on("disconnect", () =>
+      processKiller(process, manager.broadcastEndSignal)
+    );
+    process.on("SIGINT", () =>
+      processKiller(process, manager.broadcastEndSignal)
+    );
+    process.on("SIGTERM", () =>
+      processKiller(process, manager.broadcastEndSignal)
+    );
+  } catch (err) {
+    logger.printErrorMessage(
+      `Fail loading files or foler.
+Please, review your options: 'mockium --help' or your import paths in mocks`
+    );
+  }
 }
 
 start();

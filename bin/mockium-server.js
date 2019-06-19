@@ -46,40 +46,47 @@ async function start() {
 
   const config = optionsManager.load(process.cwd()) || defaultConfig(program);
 
-  await featuresLoader.load(
-    config.mocksFolder,
-    (path, extension) => resources.getResourcesFromPath(path, extension),
-    `.${config.mocksExtension}.js`
-  );
+  try {
+    await featuresLoader.load(
+      config.mocksFolder,
+      (path, extension) => resources.getResourcesFromPath(path, extension),
+      `.${config.mocksExtension}.js`
+    );
 
-  const features = (await featuresLoader.load(
-    config.featuresFolder,
-    (path, extension) => resources.getResourcesFromPath(path, extension),
-    `.${config.extension}.js`
-  )).filter(item => item.name);
+    const features = (await featuresLoader.load(
+      config.featuresFolder,
+      (path, extension) => resources.getResourcesFromPath(path, extension),
+      `.${config.extension}.js`
+    )).filter(item => item.name);
 
-  const server = new Server(features);
-  const socketServer = new SocketServer(config);
-  const serverManager = new ServerManager(server, socketServer, logger, {
-    SERVER_PORT: config.serverPort,
-    DEFAULT_FEATURE: config.base,
-    MOCKIUM_FOLDER: config.mockiumFolder
-  });
+    const server = new Server(features);
+    const socketServer = new SocketServer(config);
+    const serverManager = new ServerManager(server, socketServer, logger, {
+      SERVER_PORT: config.serverPort,
+      DEFAULT_FEATURE: config.base,
+      MOCKIUM_FOLDER: config.mockiumFolder
+    });
 
-  socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
-    processKiller(process)
-  );
+    socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
+      processKiller(process)
+    );
 
-  serverManager.on(serverEvents.SERVER_FILES_CHANGED, () => {
-    reloadFeatures(serverManager, config);
-  });
+    serverManager.on(serverEvents.SERVER_FILES_CHANGED, () => {
+      reloadFeatures(serverManager, config);
+    });
 
-  serverManager.startServer();
-  serverManager.watchChanges();
+    serverManager.startServer();
+    serverManager.watchChanges();
 
-  process.on("disconnect", () => processKiller(process));
-  process.on("SIGINT", () => processKiller(process));
-  process.on("SIGTERM", () => processKiller(process));
+    process.on("disconnect", () => processKiller(process));
+    process.on("SIGINT", () => processKiller(process));
+    process.on("SIGTERM", () => processKiller(process));
+  } catch (err) {
+    logger.printErrorMessage(
+      `Fail loading files or foler.
+Please, review your options: 'mockium --help' or your import paths in mocks`
+    );
+  }
 }
 
 async function reloadFeatures(manager, config) {

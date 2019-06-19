@@ -30,4 +30,10 @@ describe("Testing resources loader", () => {
   it("should load features", async () => {
     await expect(resources.getResourcesFromPath("foo")).resolves.toBeTruthy();
   });
+
+  it("should throw an exception if something is wrong", async () => {
+    listPathFn.mockRejectedValue(new Error("fail"));
+
+    await expect(resources.getResourcesFromPath("foo")).rejects.toThrow("fail");
+  });
 });
