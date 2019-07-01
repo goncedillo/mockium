@@ -82,10 +82,7 @@ async function start() {
     process.on("SIGINT", () => processKiller(process));
     process.on("SIGTERM", () => processKiller(process));
   } catch (err) {
-    logger.printErrorMessage(
-      `Fail loading files or foler.
-Please, review your options: 'mockium --help' or your import paths in mocks`
-    );
+    optionsManager.setErrorsInCommon(process.cwd(), "files");
   }
 }
 

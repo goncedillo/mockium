@@ -9,7 +9,6 @@ const featuresLoader = require("../lib/utils/features-loader");
 const processKiller = require("../lib/utils/process-killer");
 const defaultConfig = require("../lib/cli/config");
 const optionsManager = require("../lib/cli/options-manager");
-const logger = require("../lib/utils/console-logger");
 
 async function start() {
   program
@@ -80,10 +79,7 @@ async function start() {
       processKiller(process, manager.broadcastEndSignal)
     );
   } catch (err) {
-    logger.printErrorMessage(
-      `Fail loading files or foler.
-Please, review your options: 'mockium --help' or your import paths in mocks`
-    );
+    optionsManager.setErrorsInCommon(process.cwd(), "files");
   }
 }
 
