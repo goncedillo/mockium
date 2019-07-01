@@ -54,12 +54,20 @@ Alternatively, you could install Mockium as a local dependancy. In this case, yo
 // package.json
 {
 ...
-    scripts: {
+    "scripts": {
         ...
         "mockium": "mockium"
     }
 }
 ```
+
+On the other hand, you could want to use it as a not installed dependancy with `npx` instead of `npm` installation:
+
+```bash
+npx mockium
+```
+
+It is discouraged because this command will download always third dependancies, like `stmux`, which increases the execution time.
 
 ## Usage
 
