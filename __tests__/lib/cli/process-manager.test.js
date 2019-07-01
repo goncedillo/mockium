@@ -1,6 +1,6 @@
 const child_process = require("child_process");
-const chalk = require("chalk");
 const runner = require("../../../lib/cli/process-manager");
+const logger = require("../../../lib/utils/console-logger");
 
 describe("Testing process runner", () => {
   let spawnFn;
@@ -72,5 +72,14 @@ describe("Testing process runner", () => {
     runner.runProcess();
 
     expect(exitFn).toHaveBeenCalledWith(0);
+  });
+
+  it("should print error message when there are errors in options file", () => {
+    logger.printErrorMessage = jest.fn();
+    spawnOnFn.mockImplementation((event, cb) => cb());
+
+    runner.runProcess(() => true);
+
+    expect(logger.printErrorMessage).toHaveBeenCalled();
   });
 });
