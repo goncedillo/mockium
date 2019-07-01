@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/goncedillo/mockium.svg?branch=master)](https://travis-ci.com/goncedillo/mockium)
-[![Coverage Status](https://coveralls.io/repos/github/goncedillo/mockium/badge.svg?branch=master)](https://coveralls.io/github/goncedillo/mockium?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/goncedillo/mockium/badge.svg?branch=master)](https://coveralls.io/github/goncedillo/mockium?branch=master) ![David](https://img.shields.io/david/goncedillo/mockium.svg) ![node version](https://badgen.net/badge/node/>=8.0.0/green)
 
 <p align="center">
     <img alt="mockium-logo" src="https://drive.google.com/uc?export=view&id=1XIatwEA1_4Q2g0S1_-QY4ISbUWsxdeW-">

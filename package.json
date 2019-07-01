@@ -67,6 +67,6 @@
   },
   "os": ["linux", "darwin", "win32"],
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">= 0.8.0"
   }
 }
