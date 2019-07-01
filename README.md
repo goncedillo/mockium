@@ -42,10 +42,24 @@ Besides, Mockium offers us a simple way to load our mocks with minimum rules, pl
 Install Mockium using [npm](https://www.npmjs.com/):
 
 ```bash
-npm i mockium
+npm i -g mockium
 ```
 
-You will notice that [stmux](https://github.com/rse/stmux) is installed as a global dependency too. It is a command-line tool which permits to Mockium to split and manage terminal activities throughout [tmux](https://github.com/tmux/tmux/wiki).
+Mockium should be installed as global dependancy. It is necessary for using the command wherever you need in any project on your system.
+Furthermore, you will notice that [stmux](https://github.com/rse/stmux) is installed as a global dependency too. It is a command-line tool which permits to Mockium to split and manage terminal activities throughout [tmux](https://github.com/tmux/tmux/wiki).
+
+Alternatively, you could install Mockium as a local dependancy. In this case, you will need to add a command in your _scripts_ section in your **package.json**:
+
+```js
+// package.json
+{
+...
+    scripts: {
+        ...
+        "mockium": "mockium"
+    }
+}
+```
 
 ## Usage
 
