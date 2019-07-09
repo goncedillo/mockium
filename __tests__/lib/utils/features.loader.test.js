@@ -1,7 +1,21 @@
+const fs = require("fs");
 const featuresLoader = require("../../../lib/utils/features-loader");
+const rollupManager = require("../../../lib/cli/rollup");
 
 describe("Loading features", () => {
+  let mkdirSyncFn;
+  let rollupFn;
+
+  beforeEach(() => {
+    mkdirSyncFn = jest.fn().mockImplementation(() => true);
+    rollupFn = jest.fn().mockImplementation(() => true);
+
+    fs.mkdirSync = mkdirSyncFn;
+    rollupManager.generateBundle = rollupFn;
+  });
+
   afterEach(() => {
+    fs.mkdirSync.mockRestore();
     jest.restoreAllMocks();
   });
 
