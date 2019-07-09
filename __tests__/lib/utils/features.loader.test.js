@@ -16,6 +16,7 @@ describe("Loading features", () => {
 
   afterEach(() => {
     fs.mkdirSync.mockRestore();
+    rollupManager.generateBundle.mockRestore();
     jest.restoreAllMocks();
   });
 
@@ -28,9 +29,13 @@ describe("Loading features", () => {
     const extension = "foo";
     const extractorFn = jest.fn().mockReturnValue([]);
 
+    fs.existsSync = jest.fn().mockImplementation(() => true);
+
     await featuresLoader.load(folder, extractorFn, extension);
 
     expect(extractorFn).toHaveBeenCalledWith(folder, extension);
+
+    fs.existsSync.mockRestore();
   });
 
   it("should extract with a default extension when it is not given", async () => {
