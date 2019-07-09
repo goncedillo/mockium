@@ -1,5 +1,6 @@
 const watch = require("node-watch");
 const ServerManager = require("../../../lib/server/ServerManager");
+const constants = require("../../../lib/utils/constants");
 
 jest.mock("node-watch");
 
@@ -185,5 +186,15 @@ describe("Testing changing feature", () => {
     expect(changeFn).toHaveBeenCalled();
 
     manager.changeFeature.mockRestore();
+  });
+
+  it("should not emit when the changed file is part of the clone folder", () => {
+    const manager = new ServerManager(server, socketServer, logger);
+
+    manager.emit = jest.fn();
+
+    manager.onFileChange({}, constants.UMD_FOLDER);
+
+    expect(manager.emit).not.toHaveBeenCalled();
   });
 });

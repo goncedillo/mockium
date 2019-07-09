@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/goncedillo/mockium.svg?branch=master)](https://travis-ci.com/goncedillo/mockium)
-[![Coverage Status](https://coveralls.io/repos/github/goncedillo/mockium/badge.svg?branch=master)](https://coveralls.io/github/goncedillo/mockium?branch=master) ![David](https://img.shields.io/david/goncedillo/mockium.svg) ![node version](https://badgen.net/badge/node/>=8.0.0/green)
+[![Coverage Status](https://coveralls.io/repos/github/goncedillo/mockium/badge.svg?branch=master)](https://coveralls.io/github/goncedillo/mockium?branch=master) ![node version](https://badgen.net/badge/node/>=8.0.0/green) ![UMD ready](https://img.shields.io/badge/UMD%20modules-ready-success.svg)
 
 <p align="center">
     <img alt="mockium-logo" src="https://drive.google.com/uc?export=view&id=1XIatwEA1_4Q2g0S1_-QY4ISbUWsxdeW-">
@@ -111,7 +111,13 @@ These files has to accomplish the following model:
 e.g.
 
 ```js
-{
+// mockium-files/features/base.feature.js
+
+const mock1 = require("../mocks/mock1.mock");
+const mock2 = require("../mocks/mock2.mock");
+...
+
+module.exports = {
     "name": "myFeature",
     "description": "The awesome data that this feature contains",
     "mocks": [
@@ -141,7 +147,9 @@ The mock's model has to respect some defined properties:
 e.g:
 
 ```js
-{
+// mockium-files/mocks/mock1.mock.js
+
+module.exports = {
     url: "/some_url/:id/resource?filter=smth",
     method: "GET",
     request: {
@@ -159,6 +167,8 @@ e.g:
     }
 }
 ```
+
+All the modules can be performed in a CommonJS way as well as in a ESMolues way. It means that the both main systems (**require** and **import**) are supported in features and mocks.
 
 ### Scaffolding
 

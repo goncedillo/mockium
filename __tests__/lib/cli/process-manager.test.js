@@ -1,6 +1,8 @@
 const child_process = require("child_process");
 const runner = require("../../../lib/cli/process-manager");
 const logger = require("../../../lib/utils/console-logger");
+const fs = require("fs");
+const rimraf = require("rimraf");
 
 describe("Testing process runner", () => {
   let spawnFn;
@@ -81,5 +83,19 @@ describe("Testing process runner", () => {
     runner.runProcess(() => true);
 
     expect(logger.printErrorMessage).toHaveBeenCalled();
+  });
+
+  it("should delete mockium clone folder when exit", () => {
+    fs.existsSync = jest.fn().mockReturnValue(true);
+    rimraf.sync = jest.fn().mockImplementation(() => {});
+
+    spawnOnFn.mockImplementation((event, cb) => cb());
+
+    runner.runProcess(() => true);
+
+    expect(rimraf.sync).toHaveBeenCalled();
+
+    fs.existsSync.mockRestore();
+    rimraf.sync.mockRestore();
   });
 });

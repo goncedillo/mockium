@@ -45,6 +45,12 @@ async function start() {
   const config = optionsManager.load(process.cwd()) || defaultConfig(program);
 
   try {
+    await featuresLoader.load(
+      config.mocksFolder,
+      (path, extension) => resources.getResourcesFromPath(path, extension),
+      `.${config.mocksExtension}.js`
+    );
+
     const features = (await featuresLoader.load(
       config.featuresFolder,
       (path, extension) => resources.getResourcesFromPath(path, extension),
