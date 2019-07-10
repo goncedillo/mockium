@@ -4,7 +4,7 @@ const rollupManager = require("../../../lib/cli/rollup");
 
 jest.mock("../../../lib/cli/rollup", () => ({
   generateBundle() {
-    return true;
+    return Promise.resolve(true);
   }
 }));
 
