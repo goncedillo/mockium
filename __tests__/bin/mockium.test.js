@@ -41,7 +41,7 @@ describe("Testing mockium command", () => {
     createOptionsManagerFn = jest.fn();
     cwdFn = jest.fn().mockReturnValue(".");
     runProcessFn = jest.fn().mockImplementation(() => {});
-    clearOptionsFn = jest.fn();
+    clearOptionsFn = jest.fn().mockImplementation(() => {});
 
     optionsManager.create = () => createOptionsManagerFn.call();
     process.cwd = cwdFn;
