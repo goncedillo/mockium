@@ -1,8 +1,23 @@
+const fs = require("fs");
 const featuresLoader = require("../../../lib/utils/features-loader");
+const rollupManager = require("../../../lib/cli/rollup");
+const utilMethods = require("../../../lib/utils/methods");
 
 describe("Loading features", () => {
+  let existFn;
+  let generateFn;
+
+  beforeEach(() => {
+    existFn = jest.fn().mockImplementation(() => true);
+    generateFn = jest.fn().mockImplementation(() => Promise.resolve(true));
+
+    fs.existsSync = existFn;
+    rollupManager.generateBundle = generateFn;
+  });
+
   afterEach(() => {
-    jest.restoreAllMocks();
+    fs.existsSync.mockRestore();
+    rollupManager.generateBundle.mockRestore();
   });
 
   it("should have a load method", () => {
@@ -14,9 +29,13 @@ describe("Loading features", () => {
     const extension = "foo";
     const extractorFn = jest.fn().mockReturnValue([]);
 
+    fs.existsSync = jest.fn().mockImplementation(() => true);
+
     await featuresLoader.load(folder, extractorFn, extension);
 
     expect(extractorFn).toHaveBeenCalledWith(folder, extension);
+
+    fs.existsSync.mockRestore();
   });
 
   it("should extract with a default extension when it is not given", async () => {
@@ -47,5 +66,23 @@ describe("Loading features", () => {
     const extractorFn = jest.fn().mockRejectedValue(error);
 
     expect(featuresLoader.load(folder, extractorFn)).rejects.toEqual(error);
+  });
+
+  it("should create folder when it doens't exist", async () => {
+    const mkdirFn = jest.fn().mockImplementation(() => {});
+    const folder = ".";
+    const extractorFn = jest.fn().mockReturnValue([]);
+
+    existFn = jest.fn().mockImplementation(() => false);
+
+    fs.existsSync = existFn;
+
+    utilMethods.createFolder = mkdirFn;
+
+    await featuresLoader.load(folder, extractorFn);
+
+    expect(mkdirFn).toHaveBeenCalled();
+
+    utilMethods.createFolder.mockRestore();
   });
 });
