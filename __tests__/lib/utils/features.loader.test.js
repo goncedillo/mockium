@@ -1,6 +1,7 @@
 const fs = require("fs");
 const featuresLoader = require("../../../lib/utils/features-loader");
 const rollupManager = require("../../../lib/cli/rollup");
+const utilMethods = require("../../../lib/utils/methods");
 
 describe("Loading features", () => {
   let existFn;
@@ -63,24 +64,21 @@ describe("Loading features", () => {
     expect(featuresLoader.load(folder, extractorFn)).rejects.toEqual(error);
   });
 
-  // it("should create folder", async () => {
-  //   const mkdirFn = jest.fn().mockImplementation(() => {});
-  //   const folder = ".";
-  //   const error = new Error("fail");
-  //   const extractorFn = jest.fn().mockRejectedValue(error);
+  it("should create folder when it doens't exist", async () => {
+    const mkdirFn = jest.fn().mockImplementation(() => {});
+    const folder = ".";
+    const extractorFn = jest.fn().mockReturnValue([]);
 
-  //   existFn = jest.fn().mockImplementation(() => false);
-  //   generateFn = jest.fn().mockImplementation(() => Promise.resolve(false));
+    existFn = jest.fn().mockImplementation(() => false);
 
-  //   fs.existsSync = existFn;
-  //   rollupManager.generateBundle = generateFn;
+    fs.existsSync = existFn;
 
-  //   fs.mkdirSync = mkdirFn;
+    utilMethods.createFolder = mkdirFn;
 
-  //   await featuresLoader.load(folder, extractorFn);
+    await featuresLoader.load(folder, extractorFn);
 
-  //   expect(mkdirFn).toHaveBeenCalled();
+    expect(mkdirFn).toHaveBeenCalled();
 
-  //   fs.mkdirSync.mockRestore();
-  // });
+    utilMethods.createFolder.mockRestore();
+  });
 });
