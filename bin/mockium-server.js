@@ -14,62 +14,76 @@ const serverEvents = require("../lib/server/ServerEvent");
 
 async function start() {
   program
-    .option("-m, --mockium-folder [mockium]", "Mocks directory relative path")
     .option(
-      "-e, --features-extension [extension]",
-      "Subextension for feature files"
-    )
-    .option("-b, --features-base [base]", "Name of the base feature file")
-    .option(
-      "-p, --server-port [port]",
-      "Port where the server will be deployed"
+      "-m, --mocks-folder <mocks folder>",
+      "Mocks directory relative path (default: mocks)"
     )
     .option(
-      "-s, --server-bridge-port [socket]",
+      "-e, --features-extension <features extension>",
+      "Subextension for feature files (default: fetaure)"
+    )
+    .option(
+      "-e, --mocks-extension <mocks extension>",
+      "Subextension for mocks files (default: mock)"
+    )
+    .option(
+      "-b, --feature-base <feature base name>",
+      "Name of the base feature file (default: base)"
+    )
+    .option(
+      "-p, --server-port <server port>",
+      "Port in which the server will be running (default: 5000)"
+    )
+    .option(
+      "-s, --server-bridge-port <socket port>",
       "Port where the socket server will be deployed"
     )
     .option(
-      "-f, --features-folder [features]",
-      "Features directory relative path"
+      "-f, --features-folder <folder name>",
+      "Features directory relative path (default: features)"
     )
     .parse(process.argv);
 
   const config = optionsManager.load(process.cwd()) || defaultConfig(program);
 
-  await featuresLoader.load(
-    config.mocksFolder,
-    (path, extension) => resources.getResourcesFromPath(path, extension),
-    `.${config.mocksExtension}.js`
-  );
+  try {
+    await featuresLoader.load(
+      config.mocksFolder,
+      (path, extension) => resources.getResourcesFromPath(path, extension),
+      `.${config.mocksExtension}.js`
+    );
 
-  const features = (await featuresLoader.load(
-    config.featuresFolder,
-    (path, extension) => resources.getResourcesFromPath(path, extension),
-    `.${config.extension}.js`
-  )).filter(item => item.name);
+    const features = (await featuresLoader.load(
+      config.featuresFolder,
+      (path, extension) => resources.getResourcesFromPath(path, extension),
+      `.${config.extension}.js`
+    )).filter(item => item.name);
 
-  const server = new Server(features);
-  const socketServer = new SocketServer(config);
-  const serverManager = new ServerManager(server, socketServer, logger, {
-    SERVER_PORT: config.serverPort,
-    DEFAULT_FEATURE: config.base,
-    MOCKIUM_FOLDER: config.mockiumFolder
-  });
+    const server = new Server(features);
+    const socketServer = new SocketServer(config);
+    const serverManager = new ServerManager(server, socketServer, logger, {
+      SERVER_PORT: config.serverPort,
+      DEFAULT_FEATURE: config.base,
+      MOCKIUM_FOLDER: config.mockiumFolder
+    });
 
-  socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
-    processKiller(process)
-  );
+    socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
+      processKiller(process)
+    );
 
-  serverManager.on(serverEvents.SERVER_FILES_CHANGED, () => {
-    reloadFeatures(serverManager, config);
-  });
+    serverManager.on(serverEvents.SERVER_FILES_CHANGED, () => {
+      reloadFeatures(serverManager, config);
+    });
 
-  serverManager.startServer();
-  serverManager.watchChanges();
+    serverManager.startServer();
+    serverManager.watchChanges();
 
-  process.on("disconnect", () => processKiller(process));
-  process.on("SIGINT", () => processKiller(process));
-  process.on("SIGTERM", () => processKiller(process));
+    process.on("disconnect", () => processKiller(process));
+    process.on("SIGINT", () => processKiller(process));
+    process.on("SIGTERM", () => processKiller(process));
+  } catch (err) {
+    optionsManager.setErrorsInCommon(process.cwd(), "files");
+  }
 }
 
 async function reloadFeatures(manager, config) {

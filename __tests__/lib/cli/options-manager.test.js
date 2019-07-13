@@ -99,12 +99,16 @@ describe("Testing manager cleaner", () => {
 
   it("should delete file if it exists", () => {
     fs.existsSync = jest.fn().mockReturnValue(true);
+    fs.readFileSync = jest
+      .fn()
+      .mockImplementation(() => JSON.stringify({ data: "" }));
 
     optionsManager.clear(".");
 
     expect(unlinkFn).toHaveBeenCalledWith("./.mockium-options.json");
 
     fs.existsSync.mockRestore();
+    fs.readFileSync.mockRestore();
   });
 });
 
@@ -141,5 +145,47 @@ describe("Testing manager loader", () => {
 
     fs.existsSync.mockRestore();
     fs.readFileSync.mockRestore();
+  });
+});
+
+describe("Testing error setting", () => {
+  let requireFn;
+  let writeFilesFn;
+  let readFilesFn;
+
+  beforeEach(() => {
+    path.resolve = jest.fn().mockImplementation((p1, p2) => `${p1}/${p2}`);
+    writeFilesFn = jest.fn();
+    readFilesFn = jest.fn();
+
+    fs.writeFileSync = writeFilesFn;
+    fs.readFileSync = readFilesFn;
+
+    requireFn = jest.fn().mockImplementation(file => file);
+    require = requireFn;
+  });
+
+  afterEach(() => {
+    path.resolve.mockRestore();
+    fs.writeFileSync.mockRestore();
+    fs.readFileSync.mockRestore();
+    require.mockRestore();
+  });
+
+  it("should do nothing if file doesn't exist", () => {
+    fs.existsSync = jest.fn().mockReturnValue(null);
+
+    optionsManager.setErrorsInCommon(".", []);
+
+    expect(fs.writeFileSync).not.toHaveBeenCalled();
+  });
+
+  it("should do nothing if file doesn't exist", () => {
+    fs.existsSync = jest.fn().mockReturnValue(true);
+    readFilesFn.mockReturnValue(JSON.stringify({ data: "" }));
+
+    optionsManager.setErrorsInCommon(".", []);
+
+    expect(fs.writeFileSync).toHaveBeenCalled();
   });
 });

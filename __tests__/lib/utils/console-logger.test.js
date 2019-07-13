@@ -161,3 +161,13 @@ describe("Testing message when files upload", () => {
     expect(typeof logger.printFeaturesUpdated() === "string").toBe(true);
   });
 });
+
+describe("Testing message with error", () => {
+  it("should get an error message", () => {
+    const spy = jest.spyOn(console, "log");
+
+    logger.printErrorMessage("something");
+
+    expect(spy).toHaveBeenCalled();
+  });
+});

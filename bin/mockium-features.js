@@ -12,61 +12,81 @@ const optionsManager = require("../lib/cli/options-manager");
 
 async function start() {
   program
-    .option("-m, --mockium-folder [mockium]", "Mocks directory relative path")
     .option(
-      "-e, --features-extension [extension]",
-      "Subextension for feature files"
-    )
-    .option("-b, --features-base [base]", "Name of the base feature file")
-    .option(
-      "-p, --server-port [port]",
-      "Port where the server will be deployed"
+      "-m, --mocks-folder <mocks folder>",
+      "Mocks directory relative path (default: mocks)"
     )
     .option(
-      "-s, --server-bridge-port [socket]",
+      "-e, --features-extension <features extension>",
+      "Subextension for feature files (default: fetaure)"
+    )
+    .option(
+      "-e, --mocks-extension <mocks extension>",
+      "Subextension for mocks files (default: mock)"
+    )
+    .option(
+      "-b, --feature-base <feature base name>",
+      "Name of the base feature file (default: base)"
+    )
+    .option(
+      "-p, --server-port <server port>",
+      "Port in which the server will be running (default: 5000)"
+    )
+    .option(
+      "-s, --server-bridge-port <socket port>",
       "Port where the socket server will be deployed"
     )
     .option(
-      "-f, --features-folder [features]",
-      "Features directory relative path"
+      "-f, --features-folder <folder name>",
+      "Features directory relative path (default: features)"
     )
     .parse(process.argv);
 
   const config = optionsManager.load(process.cwd()) || defaultConfig(program);
 
-  const features = (await featuresLoader.load(
-    config.featuresFolder,
-    (path, extension) => resources.getResourcesFromPath(path, extension),
-    `.${config.extension}.js`
-  )).filter(item => item.name);
-  const manager = new MockiumManager(config, features, promptingMessages);
-  const menuOptions = [
-    {
-      name: "Change feature",
-      value: "feature",
-      go: () => manager.goToFeatureSelection()
-    },
-    {
-      name: "Exit",
-      value: "exit",
-      go: () => process.kill(process.ppid)
-    }
-  ];
+  try {
+    await featuresLoader.load(
+      config.mocksFolder,
+      (path, extension) => resources.getResourcesFromPath(path, extension),
+      `.${config.mocksExtension}.js`
+    );
 
-  const prompting = new Prompting(features, menuOptions);
+    const features = (await featuresLoader.load(
+      config.featuresFolder,
+      (path, extension) => resources.getResourcesFromPath(path, extension),
+      `.${config.extension}.js`
+    )).filter(item => item.name);
+    const manager = new MockiumManager(config, features, promptingMessages);
+    const menuOptions = [
+      {
+        name: "Change feature",
+        value: "feature",
+        go: () => manager.goToFeatureSelection()
+      },
+      {
+        name: "Exit",
+        value: "exit",
+        go: () => process.kill(process.ppid)
+      }
+    ];
 
-  manager.prompting = prompting;
-  manager.connect(manager.reconnect);
+    const prompting = new Prompting(features, menuOptions);
 
-  process.on("disconnect", () =>
-    processKiller(process, manager.broadcastEndSignal)
-  );
-  process.on("SIGINT", () =>
-    processKiller(process, manager.broadcastEndSignal)
-  );
-  process.on("SIGTERM", () =>
-    processKiller(process, manager.broadcastEndSignal)
-  );
+    manager.prompting = prompting;
+    manager.connect(manager.reconnect);
+
+    process.on("disconnect", () =>
+      processKiller(process, manager.broadcastEndSignal)
+    );
+    process.on("SIGINT", () =>
+      processKiller(process, manager.broadcastEndSignal)
+    );
+    process.on("SIGTERM", () =>
+      processKiller(process, manager.broadcastEndSignal)
+    );
+  } catch (err) {
+    optionsManager.setErrorsInCommon(process.cwd(), "files");
+  }
 }
 
 start();

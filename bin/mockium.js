@@ -6,23 +6,33 @@ const optionsManager = require("../lib/cli/options-manager");
 
 async function start() {
   program
-    .option("-m, --mockium-folder [mockium]", "Mocks directory relative path")
     .option(
-      "-e, --features-extension [extension]",
-      "Subextension for feature files"
-    )
-    .option("-b, --features-base [base]", "Name of the base feature file")
-    .option(
-      "-p, --server-port [port]",
-      "Port where the server will be deployed"
+      "-f, --features-folder <folder name>",
+      "Features directory relative path (default: features)"
     )
     .option(
-      "-s, --server-bridge-port [socket]",
+      "-m, --mocks-folder <mocks folder>",
+      "Mocks directory relative path (default: mocks)"
+    )
+    .option(
+      "-e, --features-extension <features extension>",
+      "Subextension for feature files (default: fetaure)"
+    )
+    .option(
+      "-e, --mocks-extension <mocks extension>",
+      "Subextension for mocks files (default: mock)"
+    )
+    .option(
+      "-b, --feature-base <feature base name>",
+      "Name of the base feature file (default: base)"
+    )
+    .option(
+      "-p, --server-port <server port>",
+      "Port in which the server will be running (default: 5000)"
+    )
+    .option(
+      "-s, --server-bridge-port <socket port>",
       "Port where the socket server will be deployed"
-    )
-    .option(
-      "-f, --features-folder [features]",
-      "Features directory relative path"
     )
     .parse(process.argv);
 

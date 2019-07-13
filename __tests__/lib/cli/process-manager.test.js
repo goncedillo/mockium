@@ -1,6 +1,8 @@
 const child_process = require("child_process");
-const chalk = require("chalk");
 const runner = require("../../../lib/cli/process-manager");
+const logger = require("../../../lib/utils/console-logger");
+const fs = require("fs");
+const rimraf = require("rimraf");
 
 describe("Testing process runner", () => {
   let spawnFn;
@@ -50,11 +52,12 @@ describe("Testing process runner", () => {
   });
 
   it("should execute callback when options are given", () => {
+    const spy = jest.fn();
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess({});
+    runner.runProcess(spy);
 
-    expect(nextTickFn).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalled();
   });
 
   it("should show a message in prompt before exit", () => {
@@ -71,5 +74,28 @@ describe("Testing process runner", () => {
     runner.runProcess();
 
     expect(exitFn).toHaveBeenCalledWith(0);
+  });
+
+  it("should print error message when there are errors in options file", () => {
+    logger.printErrorMessage = jest.fn();
+    spawnOnFn.mockImplementation((event, cb) => cb());
+
+    runner.runProcess(() => true);
+
+    expect(logger.printErrorMessage).toHaveBeenCalled();
+  });
+
+  it("should delete mockium clone folder when exit", () => {
+    fs.existsSync = jest.fn().mockReturnValue(true);
+    rimraf.sync = jest.fn().mockImplementation(() => {});
+
+    spawnOnFn.mockImplementation((event, cb) => cb());
+
+    runner.runProcess(() => true);
+
+    expect(rimraf.sync).toHaveBeenCalled();
+
+    fs.existsSync.mockRestore();
+    rimraf.sync.mockRestore();
   });
 });
