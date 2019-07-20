@@ -24,7 +24,7 @@ async function start() {
       "Subextension for feature files (default: fetaure)"
     )
     .option(
-      "-e, --mocks-extension <mocks extension>",
+      "-x, --mocks-extension <mocks extension>",
       "Subextension for mocks files (default: mock)"
     )
     .option(
@@ -36,7 +36,7 @@ async function start() {
       "Port in which the server will be running (default: 5000)"
     )
     .option(
-      "-b, --server-bridge-port <socket port>",
+      "-r, --server-bridge-port <socket port>",
       "Port where the socket server will be deployed"
     )
     .parse(process.argv);

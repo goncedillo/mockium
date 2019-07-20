@@ -32,6 +32,7 @@ Besides, Mockium offers us a simple way to load our mocks with minimum rules, pl
 - Scalable way to extend features and mocks
 - **Hot feature exchange**. Choose your feature in live. No reloads are needed
 - **Hot mock and features reloading**. You can extend and modify your mocks and features without having to stop an restart the process
+- UMD compatibility mode
 
 <p align="center">
     <img alt="mockium-logo" src="https://drive.google.com/uc?export=view&id=1OlIK_c5-De-gpgeWjUQA8gnQ3KNHOcqa">
@@ -77,17 +78,19 @@ Just one command and the magic happens:
 mockium
 ```
 
-Other important and optional parameters that you can use as flag, are the following ones:
+Mockium will understand that all your features and mocks are sited in the root folder of your project, in `features` and `mocks` folder by default.
+Of course, you can change this configuration using some of the following optional parameters:
 
-| Property              | Default    |                                                          |
-| --------------------- | ---------- | -------------------------------------------------------- |
-| --features-folder     | ./features | Relative path to the features folder from mockium folder |
-| --mocks-folder        | ./mocks    | Relative path to the mocks folder from mockium folder    |
-| --features-extension  | feature    | Extension chained to the feature file name               |
-| --mocks-extension     | mock       | Extension chained to the mock file name                  |
-| --feature-base        | base       | Name of the base feature file                            |
-| --server-port         | 5000       | Port where the server will be deployed                   |
-| --server-bridge-port  | 5001       | Port where the socket server will be deployed            |
+| Property                    | Default  |                                                     |
+| --------------------------- | -------- | --------------------------------------------------- |
+| -s \| --server-folder       | .        | Relative path that contains all the Mockium's stuff |
+| -f \| --features-folder     | features | Name of the folder that contains features files     |
+| -m \| --mocks-folder        | mocks    | Name of the folder that contains mocks files        |
+| -e \| --features-extension  | feature  | Extension chained to the feature file name          |
+| -x \| --mocks-extension     | mock     | Extension chained to the mock file name             |
+| -b \| --feature-base        | base     | Name of the base feature file                       |
+| -p \| --server-port         | 5000     | Port where the server will be deployed              |
+| -r \| --server-bridge-port  | 5001     | Port where the socket server will be deployed       |
 
 ## Getting started
 
@@ -176,7 +179,7 @@ Mockium gives you whole freedom to organize your features and mocks as you want.
 
 The library proposes a scaffolding, but you are completly free of choosing whichever you think that fits better for your project:
 
-```
+```bash
 project
 +-- mockium-files
 |   +-- features
@@ -186,6 +189,9 @@ project
 |   |   +-- mock1.js
 |   |   +-- mock2.js
 |   |   +-- mock3.js
+
+# command to launch
+# mockium -s ./mockium-files -f features -m mocks
 ```
 
 #### Feature files
