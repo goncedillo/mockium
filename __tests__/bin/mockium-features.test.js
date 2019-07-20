@@ -1,9 +1,10 @@
 const program = require("commander");
-const mockiumFeatures = require("../../bin/mockium-features");
 const MockiumManager = require("../../lib/MockiumManager");
-let featuresLoader = require("../../lib/utils/features-loader");
+const featuresLoader = require("../../lib/utils/features-loader");
 const processKiller = require("../../lib/utils/process-killer");
 const Prompting = require("../../lib/Prompting");
+const mockiumFeatures = require("../../bin/mockium-features");
+const optionsManager = require("../../lib/cli/options-manager");
 
 jest.mock("commander", () => ({
   option() {
@@ -12,10 +13,31 @@ jest.mock("commander", () => ({
   parse: () => {}
 }));
 
+jest.mock("../../lib/cli/resources", () => ({
+  getResourcesFromPath: () => {}
+}));
+
 jest.mock("../../lib/MockiumManager");
-jest.mock("../../lib/utils/features-loader");
+jest.mock("../../lib/utils/features-loader", () => ({
+  load: jest
+    .fn()
+    .mockImplementation((serverFolder, folder, extractor, extension) => {
+      extractor();
+      return Promise.resolve([{ name: "c" }]);
+    })
+}));
 jest.mock("../../lib/utils/process-killer");
 jest.mock("../../lib/Prompting");
+
+const mockConnectFn = jest.fn().mockImplementation(() => {});
+const mockGoFeature = jest.fn();
+
+beforeAll(() => {
+  MockiumManager.mockImplementation(() => ({
+    connect: mockConnectFn,
+    goToFeatureSelection: mockGoFeature
+  }));
+});
 
 afterAll(() => {
   jest.unmock("commander");
@@ -23,31 +45,17 @@ afterAll(() => {
   jest.unmock("../../lib/utils/features-loader");
   jest.unmock("../../lib/utils/process-killer");
   jest.unmock("../../lib/Prompting");
+  jest.unmock("../../lib/cli/resources");
+  jest.unmock("../../lib/cli/options-manager");
 });
 
 describe("Testing Mockium features", () => {
-  let connectFn;
   let processOnFn;
-  let goToFeatureSelectionFn;
   let killFn;
 
   beforeEach(() => {
-    connectFn = jest.fn().mockImplementation(() => {});
     processOnFn = jest.fn().mockImplementation((ev, cb) => cb());
-    goToFeatureSelectionFn = jest.fn();
     killFn = jest.fn().mockImplementation(() => {});
-
-    MockiumManager.mockImplementation(() => ({
-      connect: connectFn,
-      goToFeatureSelection: goToFeatureSelectionFn
-    }));
-
-    featuresLoader.load = jest
-      .fn()
-      .mockImplementation((folder, extractor, extension) => {
-        extractor();
-        return [1];
-      });
 
     processKiller.mockImplementation(() => {});
 
@@ -56,8 +64,6 @@ describe("Testing Mockium features", () => {
   });
 
   afterEach(() => {
-    MockiumManager.mockRestore();
-    featuresLoader.load.mockRestore();
     processKiller.mockRestore();
     process.on.mockRestore();
     process.kill.mockRestore();
@@ -66,7 +72,7 @@ describe("Testing Mockium features", () => {
   it("should connect manager", async () => {
     await mockiumFeatures();
 
-    expect(connectFn).toHaveBeenCalled();
+    expect(mockConnectFn).toHaveBeenCalled();
   });
 
   it("should listen to disconnect event", async () => {
@@ -97,6 +103,20 @@ describe("Testing Mockium features", () => {
 
     await mockiumFeatures();
 
-    expect(goToFeatureSelectionFn).toHaveBeenCalled();
+    expect(mockGoFeature).toHaveBeenCalled();
+  });
+
+  it("should show error when something is wrong with files", async () => {
+    optionsManager.setErrorsInCommon = jest.fn().mockImplementation(() => {});
+    featuresLoader.load = jest
+      .fn()
+      .mockImplementation(() => Promise.reject(new Error("Fail")));
+
+    await mockiumFeatures();
+
+    expect(optionsManager.setErrorsInCommon).toHaveBeenCalled();
+
+    featuresLoader.load.mockRestore();
+    optionsManager.setErrorsInCommon.mockRestore();
   });
 });
