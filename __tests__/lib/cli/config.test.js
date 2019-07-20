@@ -3,6 +3,7 @@ const configGenerator = require("../../../lib/cli/config");
 describe("Testing configuration data", () => {
   it("should return default values when nothing is given", () => {
     const expected = {
+      serverFolder: ".",
       mocksFolder: "mocks",
       featuresFolder: "features",
       extension: "feature",
@@ -17,6 +18,7 @@ describe("Testing configuration data", () => {
 
   it("should overwrite default values", () => {
     const sent = {
+      serverFolder: ".",
       mocksFolder: "mocks1",
       featuresFolder: "featuresOv",
       featuresExtension: "featureOv",
@@ -26,6 +28,7 @@ describe("Testing configuration data", () => {
     };
 
     const expected = {
+      serverFolder: ".",
       mocksFolder: "mocks1",
       featuresFolder: "featuresOv",
       extension: "featureOv",

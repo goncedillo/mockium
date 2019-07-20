@@ -55,7 +55,7 @@ describe("Testing process runner", () => {
     const spy = jest.fn();
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess(spy);
+    runner.runProcess("", spy);
 
     expect(spy).toHaveBeenCalled();
   });
@@ -63,7 +63,7 @@ describe("Testing process runner", () => {
   it("should show a message in prompt before exit", () => {
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess();
+    runner.runProcess("");
 
     expect(logFn).toHaveBeenCalled();
   });
@@ -71,7 +71,7 @@ describe("Testing process runner", () => {
   it("should finish the process without error", () => {
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess();
+    runner.runProcess("");
 
     expect(exitFn).toHaveBeenCalledWith(0);
   });
@@ -80,7 +80,7 @@ describe("Testing process runner", () => {
     logger.printErrorMessage = jest.fn();
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess(() => true);
+    runner.runProcess("", () => true);
 
     expect(logger.printErrorMessage).toHaveBeenCalled();
   });
@@ -91,7 +91,7 @@ describe("Testing process runner", () => {
 
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess(() => true);
+    runner.runProcess("", () => true);
 
     expect(rimraf.sync).toHaveBeenCalled();
 

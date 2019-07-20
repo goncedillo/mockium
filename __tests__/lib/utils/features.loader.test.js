@@ -1,7 +1,16 @@
 const fs = require("fs");
+const path = require("path");
 const featuresLoader = require("../../../lib/utils/features-loader");
 const rollupManager = require("../../../lib/cli/rollup");
 const utilMethods = require("../../../lib/utils/methods");
+
+jest.mock("path", () => ({
+  resolve: () => "."
+}));
+
+afterAll(() => {
+  jest.unmock("path");
+});
 
 describe("Loading features", () => {
   let existFn;
@@ -34,7 +43,7 @@ describe("Loading features", () => {
 
     await featuresLoader.load(baseFolder, folder, extractorFn, extension);
 
-    expect(extractorFn).toHaveBeenCalledWith(baseFolder, folder, extension);
+    expect(extractorFn).toHaveBeenCalledWith(folder, extension);
 
     fs.existsSync.mockRestore();
   });
@@ -44,7 +53,7 @@ describe("Loading features", () => {
     const expectedExtension = ".feature.js";
     const extractorFn = jest.fn().mockReturnValue([]);
 
-    await featuresLoader.load(folder, extractorFn);
+    await featuresLoader.load(".", folder, extractorFn);
 
     expect(extractorFn).toHaveBeenCalledWith(folder, expectedExtension);
   });
@@ -56,7 +65,7 @@ describe("Loading features", () => {
 
     require = jest.fn();
 
-    const resp = await featuresLoader.load(folder, extractorFn);
+    const resp = await featuresLoader.load(".", folder, extractorFn);
 
     expect(resp.length).toEqual(features.length);
   });
@@ -66,7 +75,9 @@ describe("Loading features", () => {
     const error = new Error("fail");
     const extractorFn = jest.fn().mockRejectedValue(error);
 
-    expect(featuresLoader.load(folder, extractorFn)).rejects.toEqual(error);
+    expect(featuresLoader.load(".", folder, extractorFn)).rejects.toEqual(
+      error
+    );
   });
 
   it("should create folder when it doens't exist", async () => {
@@ -80,7 +91,7 @@ describe("Loading features", () => {
 
     utilMethods.createFolder = mkdirFn;
 
-    await featuresLoader.load(folder, extractorFn);
+    await featuresLoader.load(".", folder, extractorFn);
 
     expect(mkdirFn).toHaveBeenCalled();
 
