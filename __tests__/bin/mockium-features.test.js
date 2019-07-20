@@ -4,6 +4,7 @@ const featuresLoader = require("../../lib/utils/features-loader");
 const processKiller = require("../../lib/utils/process-killer");
 const Prompting = require("../../lib/Prompting");
 const mockiumFeatures = require("../../bin/mockium-features");
+const optionsManager = require("../../lib/cli/options-manager");
 
 jest.mock("commander", () => ({
   option() {
@@ -45,6 +46,7 @@ afterAll(() => {
   jest.unmock("../../lib/utils/process-killer");
   jest.unmock("../../lib/Prompting");
   jest.unmock("../../lib/cli/resources");
+  jest.unmock("../../lib/cli/options-manager");
 });
 
 describe("Testing Mockium features", () => {
@@ -55,13 +57,6 @@ describe("Testing Mockium features", () => {
     processOnFn = jest.fn().mockImplementation((ev, cb) => cb());
     killFn = jest.fn().mockImplementation(() => {});
 
-    // featuresLoader.load = jest
-    //   .fn()
-    //   .mockImplementation((folder, extractor, extension) => {
-    //     extractor();
-    //     return [1];
-    //   });
-
     processKiller.mockImplementation(() => {});
 
     process.on = processOnFn;
@@ -69,8 +64,6 @@ describe("Testing Mockium features", () => {
   });
 
   afterEach(() => {
-    // MockiumManager.mockRestore();
-    // featuresLoader.load.mockRestore();
     processKiller.mockRestore();
     process.on.mockRestore();
     process.kill.mockRestore();
@@ -111,5 +104,19 @@ describe("Testing Mockium features", () => {
     await mockiumFeatures();
 
     expect(mockGoFeature).toHaveBeenCalled();
+  });
+
+  it("should show error when something is wrong with files", async () => {
+    optionsManager.setErrorsInCommon = jest.fn().mockImplementation(() => {});
+    featuresLoader.load = jest
+      .fn()
+      .mockImplementation(() => Promise.reject(new Error("Fail")));
+
+    await mockiumFeatures();
+
+    expect(optionsManager.setErrorsInCommon).toHaveBeenCalled();
+
+    featuresLoader.load.mockRestore();
+    optionsManager.setErrorsInCommon.mockRestore();
   });
 });

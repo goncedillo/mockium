@@ -20,14 +20,20 @@ const mockSocketOnFn = jest.fn().mockImplementation((ev, cb) => cb());
 jest.mock("../../lib/server/ServerManager");
 jest.mock("../../lib/server/SocketServer");
 jest.mock("../../lib/utils/features-loader", () => ({
-  load: () => Promise.resolve(["uno.features.js"])
+  load: (base, folder, fn, extension) => {
+    fn();
+    return Promise.resolve(["uno.features.js"]);
+  }
 }));
 jest.mock("../../lib/utils/process-killer");
+jest.mock("../../lib/cli/resources", () => ({
+  getResourcesFromPath: () => []
+}));
 
 beforeAll(() => {
   ServerManager.mockImplementation(() => ({
     startServer: mockStartServerFn,
-    on: () => mockServerOnFn,
+    on: mockServerOnFn,
     watchChanges: mockWatchChangesFn
   }));
 
