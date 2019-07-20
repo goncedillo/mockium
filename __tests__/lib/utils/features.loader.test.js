@@ -26,14 +26,15 @@ describe("Loading features", () => {
 
   it("should extract with folder and extension given", async () => {
     const folder = ".";
+    const baseFolder = ".";
     const extension = "foo";
     const extractorFn = jest.fn().mockReturnValue([]);
 
     fs.existsSync = jest.fn().mockImplementation(() => true);
 
-    await featuresLoader.load(folder, extractorFn, extension);
+    await featuresLoader.load(baseFolder, folder, extractorFn, extension);
 
-    expect(extractorFn).toHaveBeenCalledWith(folder, extension);
+    expect(extractorFn).toHaveBeenCalledWith(baseFolder, folder, extension);
 
     fs.existsSync.mockRestore();
   });

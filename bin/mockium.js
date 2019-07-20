@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 const program = require("commander");
+const path = require("path");
 const processManager = require("../lib/cli/process-manager");
 const defaultConfig = require("../lib/cli/config");
 const optionsManager = require("../lib/cli/options-manager");
 
 async function start() {
   program
+    .option(
+      "-s, --server-folder <folder name>",
+      "Mockium server relative path (default: features)"
+    )
     .option(
       "-f, --features-folder <folder name>",
       "Features directory relative path (default: features)"
@@ -31,7 +36,7 @@ async function start() {
       "Port in which the server will be running (default: 5000)"
     )
     .option(
-      "-s, --server-bridge-port <socket port>",
+      "-b, --server-bridge-port <socket port>",
       "Port where the socket server will be deployed"
     )
     .parse(process.argv);
@@ -40,7 +45,9 @@ async function start() {
 
   await optionsManager.create(process.cwd(), config);
 
-  processManager.runProcess(() => optionsManager.clear(process.cwd()));
+  processManager.runProcess(config.serverFolder, () =>
+    optionsManager.clear(process.cwd())
+  );
 }
 
 start();
