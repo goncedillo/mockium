@@ -15,6 +15,10 @@ const serverEvents = require("../lib/server/ServerEvent");
 async function start() {
   program
     .option(
+      "-s, --server-folder <folder name>",
+      "Mockium server relative path (default: features)"
+    )
+    .option(
       "-m, --mocks-folder <mocks folder>",
       "Mocks directory relative path (default: mocks)"
     )
@@ -35,7 +39,7 @@ async function start() {
       "Port in which the server will be running (default: 5000)"
     )
     .option(
-      "-s, --server-bridge-port <socket port>",
+      "-b, --server-bridge-port <socket port>",
       "Port where the socket server will be deployed"
     )
     .option(
@@ -48,12 +52,14 @@ async function start() {
 
   try {
     await featuresLoader.load(
+      config.serverFolder,
       config.mocksFolder,
       (path, extension) => resources.getResourcesFromPath(path, extension),
       `.${config.mocksExtension}.js`
     );
 
     const features = (await featuresLoader.load(
+      config.serverFolder,
       config.featuresFolder,
       (path, extension) => resources.getResourcesFromPath(path, extension),
       `.${config.extension}.js`
@@ -88,12 +94,14 @@ async function start() {
 
 async function reloadFeatures(manager, config) {
   await featuresLoader.load(
+    config.serverFolder,
     config.mocksFolder,
     (path, extension) => resources.getResourcesFromPath(path, extension),
     `.${config.mocksExtension}.js`
   );
 
   const features = (await featuresLoader.load(
+    config.serverFolder,
     config.featuresFolder,
     (path, extension) => resources.getResourcesFromPath(path, extension),
     `.${config.extension}.js`
