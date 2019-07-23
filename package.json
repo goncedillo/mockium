@@ -45,6 +45,7 @@
     "rimraf": "^2.6.3",
     "rollup": "^1.16.6",
     "stmux": "^1.6.1",
+    "url-matcher": "^0.2.2",
     "ws": "^6.2.1"
   },
   "devDependencies": {
