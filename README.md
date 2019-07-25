@@ -16,11 +16,13 @@ Surprisingly, you will see the server running in your terminal, with all the log
 
 1. [Why should I use Mockium?](#Why-should-I-use-Mockium?)
 2. [Installation](#installation)
-3. [Usage](#usage)
-4. [Getting started](#getting-started)
-5. [Feature](#features)
-6. [Mock](#mocks)
-7. [Scaffolding](#Scaffolding)
+3. [Windows users](#windows-users)
+4. [Usage](#usage)
+5. [Getting started](#getting-started)
+6. [Feature](#features)
+7. [Mock](#mocks)
+8. [Scaffolding](#Scaffolding)
+9. [Project example](#project-example)
 
 ## Why should I use Mockium?
 
@@ -70,6 +72,34 @@ npx mockium
 
 It is discouraged because this command will download always third dependancies, like `stmux`, which increases the execution time.
 
+### Windows users
+
+Mockium uses [stmux](https://github.com/rse/stmux) as terminal window manager (based on tmux), which implies that it is mainly focused on Unix system users. Although it is completly functional in Windows systems too, it is necessary to install additional software in this operative system, in order to enjoy Stmux experience properly
+
+- You will need to install _Windows build tools_ in its 2015 version. It is important because `node-gyp` (which is the Node.js tool for building packages) in Windows is only compatible with 2015 Visual Studio tools.
+  To do that, yo have to type this command in your windows terminal (with admin privileges):
+
+```bash
+npm install --global --production windows-build-tools --vs2015
+```
+
+- Next, you will need to set the version of Visual Studio tools in npm, throughout the following command:
+
+```bash
+npm config set msvs_version 2015 –global
+```
+
+#### Python 3 users (on Windows)
+
+This process will install `Python` as development dependency waiting for 2.7.x version. Perhaps, you could have installed another different version (such as 3.x.x) which is not compatible with `windows-build-tools`.
+Just in that case, you will need to do an extra step and install the 2.7.x version from the official [Python download website](https://www.python.org/downloads/release/python-2716/).
+
+Finally, you only need to tell Node.js what Python version needs to use:
+
+```bash
+npm config set python python2.7
+```
+
 ## Usage
 
 Just one command and the magic happens:
@@ -78,7 +108,7 @@ Just one command and the magic happens:
 mockium
 ```
 
-Mockium will understand that all your features and mocks are sited in the root folder of your project, in `features` and `mocks` folder by default.
+Mockium will understand that all your features and mocks are placed in the root folder of your project, inside `features` and `mocks` folder by default.
 Of course, you can change this configuration using some of the following optional parameters:
 
 | Property                    | Default  |                                                     |
@@ -218,3 +248,10 @@ In order to change the name of the base feature file you need to use the _--feat
 mockium --features-base happypath
 # The base feature would be named as happypath.feature.js
 ```
+
+## Project example
+
+Although Mockium is an easy and intuitive tool, some users need to get a start point, in order to test and learn more about it.
+For this reason, we provide an [example project](https://github.com/goncedillo/mockium-example-project) which contains all necessary stuff to start working with Mockium in a real project.
+
+The project has an initial scaffolding with features and mocks ready to be used. In addition, you will find a client based on [express](https://github.com/expressjs/express) that consumes the exposed endpoints in the mock server.
