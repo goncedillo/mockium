@@ -111,16 +111,16 @@ mockium
 Mockium will understand that all your features and mocks are placed in the root folder of your project, inside `features` and `mocks` folder by default.
 Of course, you can change this configuration using some of the following optional parameters:
 
-| Property                    | Default  |                                                     |
-| --------------------------- | -------- | --------------------------------------------------- |
-| -s \| --server-folder       | .        | Relative path that contains all the Mockium's stuff |
-| -f \| --features-folder     | features | Name of the folder that contains features files     |
-| -m \| --mocks-folder        | mocks    | Name of the folder that contains mocks files        |
-| -e \| --features-extension  | feature  | Extension chained to the feature file name          |
-| -x \| --mocks-extension     | mock     | Extension chained to the mock file name             |
-| -b \| --feature-base        | base     | Name of the base feature file                       |
-| -p \| --server-port         | 5000     | Port where the server will be deployed              |
-| -r \| --server-bridge-port  | 5001     | Port where the socket server will be deployed       |
+| Property                   | Default  |                                                     |
+| -------------------------- | -------- | --------------------------------------------------- |
+| -s, --server-folder        | .        | Relative path that contains all the Mockium's stuff |
+| -f,  --features-folder     | features | Name of the folder that contains features files     |
+| -m,  --mocks-folder        | mocks    | Name of the folder that contains mocks files        |
+| -e, --features-extension   | feature  | Extension chained to the feature file name          |
+| -x, --mocks-extension      | mock     | Extension chained to the mock file name             |
+| -b,  --feature-base        | base     | Name of the base feature file                       |
+| -p, --server-port          | 5000     | Port where the server will be deployed              |
+| -r,  --server-bridge-port  | 5001     | Port where the socket server will be deployed       |
 
 ## Getting started
 
