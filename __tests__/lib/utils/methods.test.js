@@ -127,7 +127,7 @@ describe("Testing load RC file", () => {
     JSON.parse.mockRestore();
   });
 
-  it("should resolve with an empty object if the file is wrong", async () => {
+  it("should resolve a config object when data is ok", async () => {
     const obj = { data: "data" };
 
     fs.readFile.mockImplementation((path, opts, cb) => {
@@ -139,6 +139,73 @@ describe("Testing load RC file", () => {
     const result = await utilMethods.loadConfigFromFile("");
 
     expect(result.data).toEqual(obj.data);
+
+    JSON.parse.mockRestore();
+  });
+});
+
+describe("Testing load config from package.json file", () => {
+  afterEach(() => {
+    fs.readFile.mockRestore();
+  });
+
+  it("should expose a method to load rc files", () => {
+    expect(typeof utilMethods.loadConfigFromPackageJson === "function");
+  });
+
+  it("should resolve with an empty object if load fails", () => {
+    fs.readFile.mockImplementation((path, opts, cb) => {
+      cb({});
+    });
+
+    expect(utilMethods.loadConfigFromPackageJson()).resolves.toEqual({});
+  });
+
+  it("should resolve with an empty object if the file is wrong", () => {
+    fs.readFile.mockImplementation((path, opts, cb) => {
+      cb(null);
+    });
+
+    JSON.parse = jest
+      .fn()
+      .mockImplementation(() => Promise.reject(new Error("Fail")));
+
+    expect(utilMethods.loadConfigFromPackageJson()).resolves.toEqual({});
+
+    JSON.parse.mockRestore();
+  });
+
+  it("should resolve an empty config object when data has not a 'mockium' node", async () => {
+    const obj = { data: "data" };
+
+    fs.readFile.mockImplementation((path, opts, cb) => {
+      cb(null);
+    });
+
+    JSON.parse = jest.fn().mockImplementation(() => Promise.resolve(obj));
+
+    expect(utilMethods.loadConfigFromPackageJson()).resolves.toEqual({});
+
+    JSON.parse.mockRestore();
+  });
+
+  it("should resolve an empty config object when data has not a 'mockium' node", async () => {
+    const obj = {
+      data: "data",
+      mockium: {
+        inside: "inside"
+      }
+    };
+
+    fs.readFile.mockImplementation((path, opts, cb) => {
+      cb(null);
+    });
+
+    JSON.parse = jest.fn().mockImplementation(() => Promise.resolve(obj));
+
+    const result = await utilMethods.loadConfigFromPackageJson("");
+
+    expect(result.inside).toEqual(obj.mockium.inside);
 
     JSON.parse.mockRestore();
   });
