@@ -22,7 +22,8 @@ Surprisingly, you will see the server running in your terminal, with all the log
 6. [Feature](#features)
 7. [Mock](#mocks)
 8. [Scaffolding](#Scaffolding)
-9. [Project example](#project-example)
+9. [Dynamic responses](#dynamic-responses)
+10. [Project example](#project-example)
 
 ## Why should I use Mockium?
 
@@ -202,6 +203,35 @@ module.exports = {
 ```
 
 All the modules can be performed in a CommonJS way as well as in a ESMolues way. It means that the both main systems (**require** and **import**) are supported in features and mocks.
+
+### Dynamic responses
+
+The mock object can set the body object as a function that takes as unique argument the `request` object provided. This object is the real Express request object, which works as it is mentioned in its [official documentation](https://expressjs.com/es/4x/api.html#req).
+
+```js
+// mockium-files/mocks/mock1.mock.js
+
+module.exports = {
+    url: "/some_url/:id/resource?filter=smth",
+    method: "GET",
+    request: {
+        headers: {
+            Accept: "application/json"
+        }
+    },
+    response: {
+        status: 200,
+        body: function(req) {
+                // ... some req evaluations
+                return {
+                "someData": {
+                    ...
+                }
+            }
+        }
+    }
+}
+```
 
 ### Scaffolding
 
