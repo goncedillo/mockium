@@ -4,6 +4,7 @@ const path = require("path");
 const processManager = require("../lib/cli/process-manager");
 const defaultConfig = require("../lib/cli/config");
 const optionsManager = require("../lib/cli/options-manager");
+const utils = require("../lib/utils/methods");
 
 async function start() {
   program
@@ -43,9 +44,15 @@ async function start() {
 
   const config = defaultConfig(program);
 
-  await optionsManager.create(process.cwd(), config);
+  const configFromPackageJson = await utils.loadConfigFromFile(
+    path.resolve(process.cwd(), ".mockiumrc")
+  );
 
-  processManager.runProcess(config.serverFolder, () =>
+  const configParsedFile = { ...config, ...configFromPackageJson };
+
+  await optionsManager.create(process.cwd(), configParsedFile);
+
+  processManager.runProcess(configParsedFile.serverFolder, () =>
     optionsManager.clear(process.cwd())
   );
 }
