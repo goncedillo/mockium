@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const program = require("commander");
+const path = require("path");
 const resources = require("../lib/cli/resources");
 const featuresLoader = require("../lib/utils/features-loader");
 const ServerManager = require("../lib/server/ServerManager");
@@ -11,6 +12,7 @@ const defaultConfig = require("../lib/cli/config");
 const processKiller = require("../lib/utils/process-killer");
 const optionsManager = require("../lib/cli/options-manager");
 const serverEvents = require("../lib/server/ServerEvent");
+const utils = require("../lib/utils/methods");
 
 async function start() {
   program
@@ -50,27 +52,41 @@ async function start() {
 
   const config = optionsManager.load(process.cwd()) || defaultConfig(program);
 
+  const configFromPackageJson = await utils.loadConfigFromPackageJson(
+    path.resolve(process.cwd(), "package.json")
+  );
+
+  const configFromRc = await utils.loadConfigFromFile(
+    path.resolve(process.cwd(), ".mockiumrc")
+  );
+
+  const configParsedFile = {
+    ...config,
+    ...configFromPackageJson,
+    ...configFromRc
+  };
+
   try {
     await featuresLoader.load(
-      config.serverFolder,
-      config.mocksFolder,
+      configParsedFile.serverFolder,
+      configParsedFile.mocksFolder,
       (path, extension) => resources.getResourcesFromPath(path, extension),
-      `.${config.mocksExtension}.js`
+      `.${configParsedFile.mocksExtension}.js`
     );
 
     const features = (await featuresLoader.load(
-      config.serverFolder,
-      config.featuresFolder,
+      configParsedFile.serverFolder,
+      configParsedFile.featuresFolder,
       (path, extension) => resources.getResourcesFromPath(path, extension),
-      `.${config.extension}.js`
+      `.${configParsedFile.extension}.js`
     )).filter(item => item.name);
 
     const server = new Server(features);
     const socketServer = new SocketServer(config);
     const serverManager = new ServerManager(server, socketServer, logger, {
-      SERVER_PORT: config.serverPort,
-      DEFAULT_FEATURE: config.base,
-      MOCKIUM_FOLDER: config.mockiumFolder
+      SERVER_PORT: configParsedFile.serverPort,
+      DEFAULT_FEATURE: configParsedFile.base,
+      MOCKIUM_FOLDER: configParsedFile.mockiumFolder
     });
 
     socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
@@ -78,7 +94,7 @@ async function start() {
     );
 
     serverManager.on(serverEvents.SERVER_FILES_CHANGED, () => {
-      reloadFeatures(serverManager, config);
+      reloadFeatures(serverManager, configParsedFile);
     });
 
     serverManager.startServer();

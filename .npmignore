@@ -4,3 +4,4 @@
 .travis.yml
 __tests__
 coverage
+.DS_Store

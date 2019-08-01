@@ -10,6 +10,7 @@ const featuresLoader = require("../lib/utils/features-loader");
 const processKiller = require("../lib/utils/process-killer");
 const defaultConfig = require("../lib/cli/config");
 const optionsManager = require("../lib/cli/options-manager");
+const utils = require("../lib/utils/methods");
 
 async function start() {
   program
@@ -54,22 +55,40 @@ async function start() {
   );
   const config = optionsManager.load(baseFolder) || defaulConf;
 
+  const configFromPackageJson = await utils.loadConfigFromPackageJson(
+    path.resolve(process.cwd(), "package.json")
+  );
+
+  const configFromRc = await utils.loadConfigFromFile(
+    path.resolve(process.cwd(), ".mockiumrc")
+  );
+
+  const configParsedFile = {
+    ...config,
+    ...configFromPackageJson,
+    ...configFromRc
+  };
+
   try {
     await featuresLoader.load(
-      config.serverFolder,
-      config.mocksFolder,
+      configParsedFile.serverFolder,
+      configParsedFile.mocksFolder,
       (path, extension) => resources.getResourcesFromPath(path, extension),
-      `.${config.mocksExtension}.js`
+      `.${configParsedFile.mocksExtension}.js`
     );
 
     const features = (await featuresLoader.load(
-      config.serverFolder,
-      config.featuresFolder,
+      configParsedFile.serverFolder,
+      configParsedFile.featuresFolder,
       (path, extension) => resources.getResourcesFromPath(path, extension),
-      `.${config.extension}.js`
+      `.${configParsedFile.extension}.js`
     )).filter(item => item.name);
 
-    const manager = new MockiumManager(config, features, promptingMessages);
+    const manager = new MockiumManager(
+      configParsedFile,
+      features,
+      promptingMessages
+    );
 
     const menuOptions = [
       {
