@@ -44,11 +44,19 @@ async function start() {
 
   const config = defaultConfig(program);
 
-  const configFromPackageJson = await utils.loadConfigFromFile(
+  const configFromPackageJson = await utils.loadConfigFromPackageJson(
+    path.resolve(process.cwd(), "package.json")
+  );
+
+  const configFromRc = await utils.loadConfigFromFile(
     path.resolve(process.cwd(), ".mockiumrc")
   );
 
-  const configParsedFile = { ...config, ...configFromPackageJson };
+  const configParsedFile = {
+    ...config,
+    ...configFromPackageJson,
+    ...configFromRc
+  };
 
   await optionsManager.create(process.cwd(), configParsedFile);
 
