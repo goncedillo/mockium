@@ -18,11 +18,13 @@ Surprisingly, you will see the server running in your terminal, with all the log
 2. [Installation](#installation)
 3. [Windows users](#windows-users)
 4. [Usage](#usage)
-5. [Getting started](#getting-started)
-6. [Feature](#features)
-7. [Mock](#mocks)
-8. [Scaffolding](#Scaffolding)
-9. [Project example](#project-example)
+5. [Configuration](#configuration)
+6. [Getting started](#getting-started)
+7. [Feature](#features)
+8. [Mock](#mocks)
+9. [Scaffolding](#Scaffolding)
+10. [Dynamic responses](#dynamic-responses)
+11. [Project example](#project-example)
 
 ## Why should I use Mockium?
 
@@ -122,6 +124,54 @@ Of course, you can change this configuration using some of the following optiona
 | -p, --server-port          | 5000     | Port where the server will be deployed              |
 | -r,  --server-bridge-port  | 5001     | Port where the socket server will be deployed       |
 
+## Configuration
+
+According to the previous table you can configure Mockium throughout parameters in the command. But the tool offers some alternatives, in order to make the process easier to set up.
+
+The same config options could be setted in two different and optional ways:
+
+- **package.json file** You can set all the configuration in the _package.json_ file using a `mockium` custom property.
+
+```json
+// package.json
+
+{
+    "name": "my-project",
+    "version": "1.0",
+    ...
+    "mockium": {
+        "serverFolder": "./mockium-files",
+        "mocksFolder": "mocks",
+        "featuresFolder": "features",
+        "extension": "feature",
+        "mocksExtension": "mock",
+        "base": "base",
+        "serverPort": 9000,
+        "socketPort": 5001
+    }
+}
+
+```
+
+- **.mockiumrc file** You can set all the configuration in a custom `.mockiumrc` file placed in the root of the project.
+
+```json
+// .mockiumrc
+
+{
+  "serverFolder": "./mockium-files",
+  "mocksFolder": "mocks",
+  "featuresFolder": "features",
+  "extension": "feature",
+  "mocksExtension": "mock",
+  "base": "base",
+  "serverPort": 9000,
+  "socketPort": 5001
+}
+```
+
+However although you can set all the configuration in the inside the object, **it is not mandatory**. All the properties are optional and can be setted independently of each other.
+
 ## Getting started
 
 Mockium needs to be fed with feature files.
@@ -202,6 +252,35 @@ module.exports = {
 ```
 
 All the modules can be performed in a CommonJS way as well as in a ESMolues way. It means that the both main systems (**require** and **import**) are supported in features and mocks.
+
+### Dynamic responses
+
+The mock object can set the body object as a function that takes as unique argument the `request` object provided. This object is the real Express request object, which works as it is mentioned in its [official documentation](https://expressjs.com/es/4x/api.html#req).
+
+```js
+// mockium-files/mocks/mock1.mock.js
+
+module.exports = {
+    url: "/some_url/:id/resource?filter=smth",
+    method: "GET",
+    request: {
+        headers: {
+            Accept: "application/json"
+        }
+    },
+    response: {
+        status: 200,
+        body: function(req) {
+                // ... some req evaluations
+                return {
+                "someData": {
+                    ...
+                }
+            }
+        }
+    }
+}
+```
 
 ### Scaffolding
 

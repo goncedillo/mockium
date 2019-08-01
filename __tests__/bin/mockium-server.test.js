@@ -4,6 +4,7 @@ let featuresLoader = require("../../lib/utils/features-loader");
 const serverEvents = require("../../lib/server/ServerEvent");
 const processKiller = require("../../lib/utils/process-killer");
 const mockiumServer = require("../../bin/mockium-server");
+const optionsManager = require("../../lib/cli/options-manager");
 
 jest.mock("commander", () => ({
   option() {
@@ -16,6 +17,7 @@ const mockStartServerFn = jest.fn();
 const mockWatchChangesFn = jest.fn().mockImplementation(() => {});
 const mockServerOnFn = jest.fn().mockImplementation((ev, cb) => cb());
 const mockSocketOnFn = jest.fn().mockImplementation((ev, cb) => cb());
+const mockErrorsInCommon = jest.fn();
 
 jest.mock("../../lib/server/ServerManager");
 jest.mock("../../lib/server/SocketServer");
@@ -34,7 +36,8 @@ beforeAll(() => {
   ServerManager.mockImplementation(() => ({
     startServer: mockStartServerFn,
     on: mockServerOnFn,
-    watchChanges: mockWatchChangesFn
+    watchChanges: mockWatchChangesFn,
+    reloadServer: () => {}
   }));
 
   SocketServer.mockImplementation(() => ({
@@ -60,15 +63,18 @@ describe("Testing mockium server", () => {
 
     featuresLoader.load = jest
       .fn()
-      .mockImplementation((folder, extractor, extension) => {
+      .mockImplementation((base, folder, extractor, extension) => {
         extractor();
         return [1];
       });
+
+    optionsManager.setErrorsInCommon = mockErrorsInCommon;
   });
 
   afterEach(() => {
     processKiller.mockRestore();
     featuresLoader.load.mockRestore();
+    optionsManager.setErrorsInCommon.mockRestore();
   });
 
   it("should start server manager", async () => {
@@ -108,5 +114,17 @@ describe("Testing mockium server", () => {
     await mockiumServer();
 
     expect(process.on).toHaveBeenCalledWith("SIGTERM", expect.any(Function));
+  });
+
+  it("should advice errors during the process", async () => {
+    featuresLoader.load = jest
+      .fn()
+      .mockImplementation((base, folder, extractor, extension) => {
+        Promise.reject(new Error("Error"));
+      });
+
+    await mockiumServer();
+
+    expect(mockErrorsInCommon).toHaveBeenCalled();
   });
 });
