@@ -1,3 +1,4 @@
+const commander = require("commander");
 const ServerManager = require("../../lib/server/ServerManager");
 const SocketServer = require("../../lib/server/SocketServer");
 let featuresLoader = require("../../lib/utils/features-loader");
@@ -58,6 +59,8 @@ afterAll(() => {
 });
 
 describe("Testing mockium server", () => {
+  let optionFn;
+
   beforeEach(() => {
     processKiller.mockImplementation(() => {});
 
@@ -68,6 +71,8 @@ describe("Testing mockium server", () => {
         return [1];
       });
 
+    commander.ci = false;
+
     optionsManager.setErrorsInCommon = mockErrorsInCommon;
   });
 
@@ -75,6 +80,19 @@ describe("Testing mockium server", () => {
     processKiller.mockRestore();
     featuresLoader.load.mockRestore();
     optionsManager.setErrorsInCommon.mockRestore();
+  });
+
+  it("should not listen socket events when it is in CI mode", async () => {
+    commander.ci = true;
+
+    await mockiumServer();
+
+    expect(mockSocketOnFn).not.toHaveBeenCalledWith(
+      serverEvents.SERVER_FORCE_FINISH,
+      expect.any(Function)
+    );
+
+    commander.ci = false;
   });
 
   it("should start server manager", async () => {
@@ -126,5 +144,7 @@ describe("Testing mockium server", () => {
     await mockiumServer();
 
     expect(mockErrorsInCommon).toHaveBeenCalled();
+
+    featuresLoader.load.mockRestore();
   });
 });
