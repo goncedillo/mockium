@@ -9,7 +9,7 @@
     "mockium_server": "./bin/mockium-server.js"
   },
   "scripts": {
-    "preinstall": "npm i -g stmux",
+    "preinstall": "if [ $NODE_ENV != \"production\" ] && [ $NODE_ENV != \"ci\" ] ; then npm i -g stmux ; fi",
     "test": "jest --coverage --no-cache",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

@@ -12,8 +12,11 @@ describe("Testing changing feature", () => {
   let server;
   let socketServer;
   let logger;
+  let onSocket;
 
   beforeEach(() => {
+    onSocket = jest.fn();
+
     server = {
       on: () => {},
       currentFeature: "foo",
@@ -21,7 +24,7 @@ describe("Testing changing feature", () => {
       stop: jest.fn()
     };
     socketServer = {
-      on: () => {},
+      on: onSocket,
       connect: jest.fn(),
       disconnect: jest.fn(),
       reloadFeatures: jest.fn()
@@ -196,5 +199,35 @@ describe("Testing changing feature", () => {
     manager.onFileChange({}, constants.UMD_FOLDER);
 
     expect(manager.emit).not.toHaveBeenCalled();
+  });
+
+  it("should not listen events on sockets when it doesn't exist", () => {
+    const manager = new ServerManager(server, null, logger);
+
+    expect(onSocket).not.toHaveBeenCalled();
+  });
+
+  it("should not connect with socket when it doesn't exist", () => {
+    const manager = new ServerManager(server, null, logger);
+
+    manager.serverConnected({});
+
+    expect(socketServer.connect).not.toHaveBeenCalled();
+  });
+
+  it("should not stop socket server when it doesn't exist", () => {
+    const manager = new ServerManager(server, null, logger);
+
+    manager.stopServer();
+
+    expect(socketServer.disconnect).not.toHaveBeenCalled();
+  });
+
+  it("should not reload socket server when it doesn't exist", () => {
+    const manager = new ServerManager(server, null, logger);
+
+    manager.reloadServer({});
+
+    expect(socketServer.reloadFeatures).not.toHaveBeenCalled();
   });
 });

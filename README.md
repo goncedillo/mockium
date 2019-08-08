@@ -19,12 +19,13 @@ Surprisingly, you will see the server running in your terminal, with all the log
 3. [Windows users](#windows-users)
 4. [Usage](#usage)
 5. [Configuration](#configuration)
-6. [Getting started](#getting-started)
-7. [Feature](#features)
-8. [Mock](#mocks)
-9. [Scaffolding](#Scaffolding)
-10. [Dynamic responses](#dynamic-responses)
-11. [Project example](#project-example)
+6. [CI mode](#continuous-integration-mode)
+7. [Getting started](#getting-started)
+8. [Feature](#features)
+9. [Mock](#mocks)
+10. [Scaffolding](#Scaffolding)
+11. [Dynamic responses](#dynamic-responses)
+12. [Project example](#project-example)
 
 ## Why should I use Mockium?
 
@@ -37,6 +38,7 @@ Besides, Mockium offers us a simple way to load our mocks with minimum rules, pl
 - **Hot feature exchange**. Choose your feature in live. No reloads are needed
 - **Hot mock and features reloading**. You can extend and modify your mocks and features without having to stop an restart the process
 - UMD compatibility mode
+- Continuous Integration ready
 
 <p align="center">
     <img alt="mockium-logo" src="https://drive.google.com/uc?export=view&id=1OlIK_c5-De-gpgeWjUQA8gnQ3KNHOcqa">
@@ -123,6 +125,7 @@ Of course, you can change this configuration using some of the following optiona
 | -b,  --feature-base        | base     | Name of the base feature file                       |
 | -p, --server-port          | 5000     | Port where the server will be deployed              |
 | -r,  --server-bridge-port  | 5001     | Port where the socket server will be deployed       |
+| -c,  --ci                  | false    | Continuous Integration mode. No UI and REST based   |
 
 ## Configuration
 
@@ -170,7 +173,33 @@ The same config options could be setted in two different and optional ways:
 }
 ```
 
-However although you can set all the configuration in the inside the object, **it is not mandatory**. All the properties are optional and can be setted independently of each other.
+However, although you can set all the configuration in the inside the object, **it is not mandatory**. All the properties are optional and can be setted independently of each other.
+
+## Continuous Integration mode
+
+Indeed Mockium has been created to offer a great experience to developers trhoughout its marvelous UI feature selector, but the tool come with a CI mode that runs in a simpler way, with a only process too.  
+All the functionalities are present in this mode, but it uses a different way to interact with it.
+
+As the process is running without an UI for changing features, it is necessary to make **http calls** at `POST /mockium--change--feature`.  
+This endpoint expects a body object with a `feature` property with the name of the new feature to be setted.
+
+```bash
+POST http://localhost:5000/mockium--change--feature
+
+# Payload
+
+{
+    "feature": "newWonderfullFeature"
+}
+```
+
+Just in case the feature is not present in the body object, or it doesn't match with any of the provided features, `base` feature will be setted instead.
+
+For running this CI mode you just have to use this command:
+
+```bash
+mockium -s ./mockium-files-path --ci
+```
 
 ## Getting started
 

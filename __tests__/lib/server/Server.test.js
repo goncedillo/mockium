@@ -1,25 +1,34 @@
 const express = require("express");
 const Server = require("../../../lib/server/Server");
 
+jest.mock("../../../lib/utils/console-logger", () => ({
+  printErrorMessage: jest.fn().mockImplementation(() => {}),
+  printFeatureChanged: jest.fn().mockImplementation(() => {})
+}));
+
 jest.mock("express");
 
 beforeAll(() => {
   express.mockReturnValue({
-    use: () => {}
+    use: () => {},
+    post: () => {}
   });
 });
 
 afterAll(() => {
   jest.unmock("express");
+  jest.unmock("../../../lib/utils/console-logger");
 });
 
 describe("Testing server", () => {
   beforeEach(() => {
     express.use = jest.fn();
+    express.post = jest.fn();
   });
 
   afterEach(() => {
     express.use.mockRestore();
+    express.post.mockRestore();
   });
 
   it("should parse features grouping all its mocks", () => {
@@ -243,7 +252,8 @@ describe("Test starting server", () => {
 
     express.mockReturnValue({
       use: () => {},
-      listen: () => {}
+      listen: () => {},
+      post: () => {}
     });
   });
 
@@ -273,7 +283,8 @@ describe("Test running server", () => {
 
     express.mockReturnValue({
       use: () => {},
-      listen: listenFn
+      listen: listenFn,
+      post: () => {}
     });
 
     server = new Server();
@@ -313,7 +324,8 @@ describe("Test stopping server", () => {
       use: () => {},
       listen: () => ({
         close: closeFn
-      })
+      }),
+      post: () => {}
     });
 
     server = new Server();
@@ -328,5 +340,67 @@ describe("Test stopping server", () => {
     server.stop();
 
     expect(closeFn).toHaveBeenCalled();
+  });
+});
+
+describe("Testing change features in CI mode", () => {
+  let server;
+  let features;
+  let req;
+  let res;
+
+  beforeEach(() => {
+    req = {
+      body: {
+        feature: ""
+      }
+    };
+
+    res = {
+      status: () => ({ send: () => {} })
+    };
+
+    server = new Server();
+
+    features = [
+      { name: "base", mocks: [] },
+      { name: "foo", mocks: [] },
+      { name: "bar", mocks: [] }
+    ];
+  });
+
+  it("should have a function to change features in CI mode", () => {
+    expect(typeof server.changeFeatureByREST === "function");
+  });
+
+  it("should set base feature when new feature is not given", () => {
+    server = new Server();
+    server.features = features;
+
+    server.changeFeatureByREST(req, res);
+
+    expect(server.currentFeature.name).toEqual("base");
+  });
+
+  it("should set base feature when new feature doesn't match with provided", () => {
+    server = new Server();
+    server.features = features;
+
+    req.body.feature = "wrong";
+
+    server.changeFeatureByREST(req, res);
+
+    expect(server.currentFeature.name).toEqual("base");
+  });
+
+  it("should set new feature when new feature matches with provided", () => {
+    server = new Server();
+    server.features = features;
+
+    req.body.feature = "foo";
+
+    server.changeFeatureByREST(req, res);
+
+    expect(server.currentFeature.name).toEqual("foo");
   });
 });

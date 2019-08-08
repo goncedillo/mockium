@@ -40,6 +40,7 @@ async function start() {
       "-r, --server-bridge-port <socket port>",
       "Port where the socket server will be deployed"
     )
+    .option("-c, --ci", "Run in continous integration mode. No UI")
     .parse(process.argv);
 
   const config = defaultConfig(program);
@@ -60,8 +61,14 @@ async function start() {
 
   await optionsManager.create(process.cwd(), configParsedFile);
 
-  processManager.runProcess(configParsedFile.serverFolder, () =>
-    optionsManager.clear(process.cwd())
+  // if (program.ci) {
+  //   return console.log(program);
+  // }
+
+  processManager.runProcess(
+    configParsedFile.serverFolder,
+    () => optionsManager.clear(process.cwd()),
+    program.ci
   );
 }
 

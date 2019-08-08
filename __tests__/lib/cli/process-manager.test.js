@@ -98,4 +98,14 @@ describe("Testing process runner", () => {
     fs.existsSync.mockRestore();
     rimraf.sync.mockRestore();
   });
+
+  it("should run only server when it is a CI ", () => {
+    runner.runProcess({}, false, true);
+
+    expect(spawnFn).toHaveBeenCalledWith(
+      "mockium_server",
+      ["--ci"],
+      expect.any(Object)
+    );
+  });
 });

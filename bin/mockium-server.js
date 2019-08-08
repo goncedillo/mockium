@@ -48,10 +48,10 @@ async function start() {
       "-f, --features-folder <folder name>",
       "Features directory relative path (default: features)"
     )
+    .option("-c, --ci", "Run in continous integration mode. No UI")
     .parse(process.argv);
 
   const config = optionsManager.load(process.cwd()) || defaultConfig(program);
-
   const configFromPackageJson = await utils.loadConfigFromPackageJson(
     path.resolve(process.cwd(), "package.json")
   );
@@ -82,16 +82,18 @@ async function start() {
     )).filter(item => item.name);
 
     const server = new Server(features);
-    const socketServer = new SocketServer(config);
+    const socketServer = program.ci ? null : new SocketServer(config);
     const serverManager = new ServerManager(server, socketServer, logger, {
       SERVER_PORT: configParsedFile.serverPort,
       DEFAULT_FEATURE: configParsedFile.base,
       MOCKIUM_FOLDER: configParsedFile.mockiumFolder
     });
 
-    socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
-      processKiller(process)
-    );
+    if (!program.ci) {
+      socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
+        processKiller(process)
+      );
+    }
 
     serverManager.on(serverEvents.SERVER_FILES_CHANGED, () => {
       reloadFeatures(serverManager, configParsedFile);
