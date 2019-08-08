@@ -71,23 +71,12 @@ describe("Testing mockium server", () => {
         return [1];
       });
 
-    // const obj = {
-    //   option() {
-    //     return this;
-    //   },
-    //   parse: () => {}
-    // };
-
-    // commander.option = jest.fn().mockImplementation(obj.option);
-    // commander.parse = jest.fn();
     commander.ci = false;
 
     optionsManager.setErrorsInCommon = mockErrorsInCommon;
   });
 
   afterEach(() => {
-    // commander.option.mockRestore();
-    // commander.parse.mockRestore();
     processKiller.mockRestore();
     featuresLoader.load.mockRestore();
     optionsManager.setErrorsInCommon.mockRestore();
