@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const resourceExtractor = require("../../../lib/utils/resource-extractor");
 
 jest.mock("fs");
@@ -59,7 +60,7 @@ describe("Testing path listing", () => {
       .mockReturnValue(["foo", "bar", "zed"]);
     fs.statSync.mockImplementation(dir => ({
       isDirectory: () => {
-        const splitted = dir.split("/");
+        const splitted = dir.split(path.sep);
         const last = splitted[splitted.length - 1];
 
         return last.includes("_dir_");
@@ -77,7 +78,7 @@ describe("Testing path listing", () => {
       .mockReturnValue(["foo", "bar", "zed"]);
     fs.statSync.mockImplementation(dir => ({
       isDirectory: () => {
-        const splitted = dir.split("/");
+        const splitted = dir.split(path.sep);
         const last = splitted[splitted.length - 1];
 
         return last.includes("_dir_");
