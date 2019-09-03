@@ -61,10 +61,6 @@ async function start() {
 
   await optionsManager.create(process.cwd(), configParsedFile);
 
-  // if (program.ci) {
-  //   return console.log(program);
-  // }
-
   processManager.runProcess(
     configParsedFile.serverFolder,
     () => optionsManager.clear(process.cwd()),

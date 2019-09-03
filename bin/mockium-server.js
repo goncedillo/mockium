@@ -90,9 +90,9 @@ async function start() {
     });
 
     if (!program.ci) {
-      socketServer.on(serverEvents.SERVER_FORCE_FINISH, () =>
-        processKiller(process)
-      );
+      socketServer.on(serverEvents.SERVER_FORCE_FINISH, () => {
+        processKiller(process);
+      });
     }
 
     serverManager.on(serverEvents.SERVER_FILES_CHANGED, () => {

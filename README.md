@@ -177,7 +177,7 @@ However, although you can set all the configuration in the inside the object, **
 
 ## Continuous Integration mode
 
-Indeed Mockium has been created to offer a great experience to developers trhoughout its marvelous UI feature selector, but the tool come with a CI mode that runs in a simpler way, with a only process too.  
+Indeed Mockium has been created to offer a great experience to developers throughout its marvelous UI feature selector, but the tool comes with a CI mode that runs in a simpler way, with a only process too.  
 All the functionalities are present in this mode, but it uses a different way to interact with it.
 
 As the process is running without an UI for changing features, it is necessary to make **http calls** at `POST /mockium--change--feature`.  

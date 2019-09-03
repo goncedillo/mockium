@@ -94,12 +94,15 @@ async function start() {
       {
         name: "Change feature",
         value: "feature",
-        go: () => manager.goToFeatureSelection()
+        go: manager.goToFeatureSelection
       },
       {
         name: "Exit",
         value: "exit",
-        go: () => process.kill(process.ppid)
+        go: () => {
+          process.kill(process.ppid);
+          manager.broadcastEndSignal();
+        }
       }
     ];
 

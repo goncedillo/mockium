@@ -35,7 +35,8 @@ const mockGoFeature = jest.fn();
 beforeAll(() => {
   MockiumManager.mockImplementation(() => ({
     connect: mockConnectFn,
-    goToFeatureSelection: mockGoFeature
+    goToFeatureSelection: mockGoFeature,
+    broadcastEndSignal: jest.fn()
   }));
 });
 
