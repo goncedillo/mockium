@@ -94,7 +94,7 @@ async function start() {
       {
         name: "Change feature",
         value: "feature",
-        go: manager.goToFeatureSelection
+        go: manager.goToFeatureSelection.bind(manager)
       },
       {
         name: "Exit",
