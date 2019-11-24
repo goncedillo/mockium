@@ -18,10 +18,10 @@ describe("Testing util methods", () => {
     { method: "GET", url: "/foo/:id", id: 2 },
     { method: "GET", url: "/foo/:id/:other", id: 3 },
     { method: "GET", url: "/bar/:id/bar/zed", id: 4 },
-    { method: "GET", url: "/zed/:id/bar/other", id: 5 },
-    { method: "GET", url: "/zed/foo/bar/other", id: 6 },
-    { method: "GET", url: "/bar/:other/foo/:id", id: 7 },
-    { method: "GET", url: "/bar/zed/foo/moon", id: 8 },
+    { method: "GET", url: "/zed/foo/bar/other", id: 5 },
+    { method: "GET", url: "/zed/:id/bar/other", id: 6 },
+    { method: "GET", url: "/bar/zed/foo/moon", id: 7 },
+    { method: "GET", url: "/bar/:other/foo/:id", id: 8 },
     { method: "POST", url: "/bar/zed/foo/moon", id: 9 }
   ];
 
@@ -36,7 +36,7 @@ describe("Testing util methods", () => {
       options
     );
 
-    expect(result.id).toEqual(8);
+    expect(result.id).toEqual(7);
   });
 
   it("should get the right match with optional paths", () => {
@@ -52,7 +52,7 @@ describe("Testing util methods", () => {
       options
     );
 
-    expect(result.id).toEqual(6);
+    expect(result.id).toEqual(5);
   });
 
   it("should get the right match with right method", () => {
