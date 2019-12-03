@@ -4,8 +4,13 @@ const constants = require("../../../lib/utils/constants");
 
 jest.mock("node-watch");
 
+beforeAll(() => {
+  global.__basepath = __dirname;
+});
+
 afterAll(() => {
   jest.unmock("node-watch");
+  delete global.__basepath;
 });
 
 describe("Testing changing feature", () => {
@@ -143,7 +148,9 @@ describe("Testing changing feature", () => {
   });
 
   it("should watch file changes", () => {
-    const manager = new ServerManager(server, socketServer, logger);
+    const manager = new ServerManager(server, socketServer, logger, {
+      MOCKIUM_FOLDER: ""
+    });
 
     manager.watchChanges();
 
@@ -189,16 +196,6 @@ describe("Testing changing feature", () => {
     expect(changeFn).toHaveBeenCalled();
 
     manager.changeFeature.mockRestore();
-  });
-
-  it("should not emit when the changed file is part of the clone folder", () => {
-    const manager = new ServerManager(server, socketServer, logger);
-
-    manager.emit = jest.fn();
-
-    manager.onFileChange({}, constants.UMD_FOLDER);
-
-    expect(manager.emit).not.toHaveBeenCalled();
   });
 
   it("should not listen events on sockets when it doesn't exist", () => {

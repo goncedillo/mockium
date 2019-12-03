@@ -8,8 +8,14 @@ jest.mock("path", () => ({
   resolve: () => "."
 }));
 
+beforeAll(() => {
+  global.__basepath = __dirname;
+});
+
 afterAll(() => {
   jest.unmock("path");
+
+  delete global.__basepath;
 });
 
 describe("Loading features", () => {

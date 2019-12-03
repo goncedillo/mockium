@@ -62,9 +62,7 @@ describe("Testing mockium command", () => {
   });
 
   it("should clear options when process finishes", async () => {
-    processManager.runProcess = jest
-      .fn()
-      .mockImplementation((options, cb) => cb());
+    processManager.runProcess = jest.fn().mockImplementation(cb => cb());
 
     await mockium();
 

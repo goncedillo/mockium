@@ -43,6 +43,8 @@ async function start() {
     .option("-c, --ci", "Run in continous integration mode. No UI")
     .parse(process.argv);
 
+  global.__basepath = __dirname;
+
   const config = defaultConfig(program);
 
   const configFromPackageJson = await utils.loadConfigFromPackageJson(
@@ -59,13 +61,9 @@ async function start() {
     ...configFromRc
   };
 
-  await optionsManager.create(process.cwd(), configParsedFile);
+  await optionsManager.create(__dirname, configParsedFile);
 
-  processManager.runProcess(
-    configParsedFile.serverFolder,
-    () => optionsManager.clear(process.cwd()),
-    program.ci
-  );
+  processManager.runProcess(() => optionsManager.clear(__dirname), program.ci);
 }
 
 start();

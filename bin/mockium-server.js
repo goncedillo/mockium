@@ -51,7 +51,9 @@ async function start() {
     .option("-c, --ci", "Run in continous integration mode. No UI")
     .parse(process.argv);
 
-  const config = optionsManager.load(process.cwd()) || defaultConfig(program);
+  global.__basepath = __dirname;
+
+  const config = optionsManager.load(__dirname) || defaultConfig(program);
   const configFromPackageJson = await utils.loadConfigFromPackageJson(
     path.resolve(process.cwd(), "package.json")
   );
@@ -86,7 +88,7 @@ async function start() {
     const serverManager = new ServerManager(server, socketServer, logger, {
       SERVER_PORT: configParsedFile.serverPort,
       DEFAULT_FEATURE: configParsedFile.base,
-      MOCKIUM_FOLDER: configParsedFile.mockiumFolder
+      MOCKIUM_FOLDER: configParsedFile.serverFolder
     });
 
     if (!program.ci) {
@@ -106,7 +108,7 @@ async function start() {
     process.on("SIGINT", () => processKiller(process));
     process.on("SIGTERM", () => processKiller(process));
   } catch (err) {
-    optionsManager.setErrorsInCommon(process.cwd(), "files");
+    optionsManager.setErrorsInCommon(__dirname, "files");
   }
 }
 

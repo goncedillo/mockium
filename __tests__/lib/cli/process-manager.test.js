@@ -4,6 +4,14 @@ const logger = require("../../../lib/utils/console-logger");
 const fs = require("fs");
 const rimraf = require("rimraf");
 
+beforeAll(() => {
+  global.__basepath = __dirname;
+});
+
+afterAll(() => {
+  delete global.__basepath;
+});
+
 describe("Testing process runner", () => {
   let spawnFn;
   let spawnOnFn;
@@ -55,7 +63,7 @@ describe("Testing process runner", () => {
     const spy = jest.fn();
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess("", spy);
+    runner.runProcess(spy);
 
     expect(spy).toHaveBeenCalled();
   });
@@ -63,7 +71,7 @@ describe("Testing process runner", () => {
   it("should show a message in prompt before exit", () => {
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess("");
+    runner.runProcess(() => {});
 
     expect(logFn).toHaveBeenCalled();
   });
@@ -80,7 +88,7 @@ describe("Testing process runner", () => {
     logger.printErrorMessage = jest.fn();
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess("", () => true);
+    runner.runProcess(() => true);
 
     expect(logger.printErrorMessage).toHaveBeenCalled();
   });
@@ -91,7 +99,7 @@ describe("Testing process runner", () => {
 
     spawnOnFn.mockImplementation((event, cb) => cb());
 
-    runner.runProcess("", () => true);
+    runner.runProcess(() => true);
 
     expect(rimraf.sync).toHaveBeenCalled();
 
@@ -100,7 +108,7 @@ describe("Testing process runner", () => {
   });
 
   it("should run only server when it is a CI ", () => {
-    runner.runProcess({}, false, true);
+    runner.runProcess({}, true);
 
     expect(spawnFn).toHaveBeenCalledWith(
       "mockium_server",

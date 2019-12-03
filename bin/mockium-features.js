@@ -48,12 +48,14 @@ async function start() {
     )
     .parse(process.argv);
 
+  global.__basepath = __dirname;
+
   const defaulConf = defaultConfig(program);
-  const baseFolder = path.resolve(
-    process.cwd(),
-    defaultConfig(program).serverFolder
-  );
-  const config = optionsManager.load(baseFolder) || defaulConf;
+  // const baseFolder = path.resolve(
+  //   process.cwd(),
+  //   defaultConfig(program).serverFolder
+  // );
+  const config = optionsManager.load(__dirname) || defaulConf;
 
   const configFromPackageJson = await utils.loadConfigFromPackageJson(
     path.resolve(process.cwd(), "package.json")
@@ -121,7 +123,7 @@ async function start() {
       processKiller(process, manager.broadcastEndSignal)
     );
   } catch (err) {
-    optionsManager.setErrorsInCommon(process.cwd(), "files");
+    optionsManager.setErrorsInCommon(__dirname, "files");
   }
 }
 
