@@ -47,7 +47,7 @@
     "rollup": "1.16.6",
     "stmux": "1.7.1",
     "url-matcher": "0.2.2",
-    "ws": "6.2.1"
+    "ws": "7.4.6"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
