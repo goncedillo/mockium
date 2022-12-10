@@ -39,7 +39,7 @@
     "commander": "2.19.0",
     "cors": "2.8.5",
     "decache": "4.5.1",
-    "express": "4.16.4",
+    "express": "4.17.3",
     "inquirer": "6.2.2",
     "morgan": "1.9.1",
     "node-watch": "0.6.0",
